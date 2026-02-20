@@ -25,7 +25,7 @@ st.markdown("""
         padding-bottom: 10px;
     }
     </style>
-    """, unsafe_allow_index=True)
+    """, unsafe_allow_html=True)
 
 # 1. YOUR MOD 31 FRIENDLY MAP
 char_to_coord = {
