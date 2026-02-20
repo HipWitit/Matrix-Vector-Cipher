@@ -81,7 +81,7 @@ def modInverse(n, m=31):
 
 # 3. APP UI
 st.image(img, width=250)
-st.title("Matrix Vector Cipher")
+st.title("Cipher's Secret Language")
 
 kw = st.text_input("Enter Secret Key", type="password").upper().strip()
 
