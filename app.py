@@ -17,7 +17,7 @@ st.markdown("""
     /* 1. Main Background stays Lavender */
     .stApp {
         background-color: #D1D5F9 !important;
-        color: #A4ADD3 !important;
+        color: #B4A7D6 !important;
     }
     
     /* 2. THE FIX: Change black boxes to Pink */
