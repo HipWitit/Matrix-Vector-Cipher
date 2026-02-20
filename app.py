@@ -80,7 +80,9 @@ def modInverse(n, m=31):
     return None
 
 # 3. APP UI
-st.title("🧮 Matrix Vector Cipher")
+st.image(img, width=250)
+st.title("Matrix Vector Cipher")
+
 kw = st.text_input("Enter Secret Key", type="password").upper().strip()
 
 if kw:
