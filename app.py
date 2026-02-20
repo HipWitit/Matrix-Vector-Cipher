@@ -35,7 +35,7 @@ st.markdown("""
         border: none !important;
     }
 
-    /* 3. Make the "Matrix Active" box a softer Green-Blue */
+    /* 3. Make the "Matrix Active" box true color */
     .stAlert {
         background-color: #B2F2E3 !important;
         color: #5B618A !important;
