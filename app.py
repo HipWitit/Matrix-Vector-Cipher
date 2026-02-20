@@ -98,7 +98,7 @@ def modInverse(n, m=31):
 
 # 3. APP UI
 st.image(img, width=250)
-st.title("Cipher's Secret Language")
+st.title("Cipher's Secret Love Language")
 
 kw = st.text_input("Keys Please", type="password").upper().strip()
 
@@ -112,7 +112,7 @@ if kw:
     else:
         st.success(f"Matrix Active: [[{a},{b}],[{c},{d}]]")
         
-        tab1, tab2 = st.tabs(["Encode", "Decode"])
+        tab1, tab2 = st.tabs(["Kiss""Tell"), 
         
         with tab1:
             msg = st.text_input("Message to Scramble:").upper()
