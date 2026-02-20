@@ -41,7 +41,7 @@ st.markdown("""
     div[role="alert"], 
     div[data-testid="stNotification"],
     div[data-testid="stMarkdownContainer"] .stAlert {
-        background-color: #B2F2E3 !important;
+        background-color: #D4FFEA !important;
         color: #5B618A !important;
         border: none !important;
         opacity: 1 !important;
