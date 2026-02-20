@@ -29,24 +29,33 @@ st.markdown("""
         border: none !important;
     }
 
-    /* This removes the dark wrapper around the inputs */
-    div[data-baseweb="input"], div[data-baseweb="textarea"] {
+     /* 2. Clear Input Wrappers */
+    div[data-baseweb="input"] {
         background-color: transparent !important;
         border: none !important;
     }
 
-        /* 3. True Mint & Periwinkle (No Overlays) */
-    div[data-testid="stAlert"] {
+    /* 3. Global Mint & Periwinkle Fix */
+    div[data-testid="stAlert"], 
+    .stAlert, 
+    div[role="alert"], 
+    div[data-testid="stNotification"],
+    div[data-testid="stMarkdownContainer"] .stAlert {
         background-color: #B2F2E3 !important;
         color: #5B618A !important;
         border: none !important;
-        opacity: 1 !important; /* Forces the true color */
+        opacity: 1 !important;
     }
     
-    /* This targets the icon inside the box so it matches too */
+    /* Force Periwinkle on all internal text and icons */
+    div[data-testid="stAlert"] p, 
+    div[data-testid="stAlert"] div,
     div[data-testid="stAlert"] svg {
+        color: #5B618A !important;
         fill: #5B618A !important;
     }
+ 
+
 
 
 
