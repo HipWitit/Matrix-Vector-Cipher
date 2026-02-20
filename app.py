@@ -148,12 +148,12 @@ if kw:
             # (Decoding logic goes here similar to your first app)
 
         with tab2:
-            st.header("Kissed Now Tell")
+            st.header("She Was Kissed, Now Will She Tell")
             col1, col2 = st.columns(2)
             with col1:
-                start_in = st.text_input("Start Point (x,y):", key="decode_start")
+                start_in = st.text_input("Where The Kiss Started (x,y):", key="decode_start")
             with col2:
-                vector_in = st.text_area("Vectors (e.g. (5,-7)):", key="decode_vectors")
+                vector_in = st.text_area("Places She Was Kissed (e.g. (5,-7)):", key="decode_vectors")
 
             if st.button("Make Her Meow"):
                 try:
