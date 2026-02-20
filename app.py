@@ -32,8 +32,6 @@ st.markdown("""
         color: #2B543A !important;
         border: none !important;
     }
-    </style>
-    """, unsafe_allow_html=True)
 
     .stTabs [data-baseweb="tab"] {
         background-color: #E2E4FF !important;
