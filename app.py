@@ -122,7 +122,8 @@ if kw:
     if det_inv is None:
         st.error("Key error: Matrix not invertible. Try another word!")
     else:
-        st.success(f"Matrix Active: [[{a},{b}],[{c},{d}]]")
+        st.success(f"Cyfer's Ready For Your Kiss: [[{a},{b}],[{c},{d}]]")
+
         
         tab1, tab2 = st.tabs(["Kiss","Tell"]) 
         
