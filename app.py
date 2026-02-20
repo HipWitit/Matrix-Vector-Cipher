@@ -83,7 +83,7 @@ def modInverse(n, m=31):
 st.image(img, width=250)
 st.title("Cipher's Secret Language")
 
-kw = st.text_input("Enter Secret Key", type="password").upper().strip()
+kw = st.text_input("Keys Please", type="password").upper().strip()
 
 if kw:
     a, b, c, d = get_matrix_elements(kw)
@@ -125,7 +125,7 @@ if kw:
             with col2:
                 vector_in = st.text_area("Vectors (e.g. (5,-7)):", key="decode_vectors")
 
-            if st.button("Decode Message"):
+            if st.button("Make Her Meow"):
                 try:
                     # 1. Calculate the Inverse Matrix (The Reverse Gear)
                     # Math: 1/det * [[d, -b], [-c, a]]
