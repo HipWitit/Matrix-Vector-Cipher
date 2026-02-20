@@ -58,3 +58,44 @@ if kw:
             st.info("Paste your coordinates here to reverse the matrix scramble.")
             # (Decoding logic goes here similar to your first app)
 
+        with tab2:
+            st.header("Reverse the Matrix")
+            col1, col2 = st.columns(2)
+            with col1:
+                start_in = st.text_input("Start Point (x,y):", key="decode_start")
+            with col2:
+                vector_in = st.text_area("Vectors (e.g. (5,-7)):", key="decode_vectors")
+
+            if st.button("Decode Message"):
+                try:
+                    # 1. Calculate the Inverse Matrix (The Reverse Gear)
+                    # Math: 1/det * [[d, -b], [-c, a]]
+                    inv_a = (d * det_inv) % 31
+                    inv_b = (-b * det_inv) % 31
+                    inv_c = (-c * det_inv) % 31
+                    inv_d = (a * det_inv) % 31
+                    
+                    # 2. Parse the start point
+                    sx, sy = map(int, start_in.split(','))
+                    curr = (sx, sy)
+                    
+                    # 3. Create a mini-function to unscramble points
+                    def untransform(tx, ty):
+                        ux = (inv_a * tx + inv_b * ty) % 31
+                        uy = (inv_c * tx + inv_d * ty) % 31
+                        return ux, uy
+
+                    # 4. Decode the first letter
+                    ux, uy = untransform(sx, sy)
+                    decoded = [coord_to_char.get((ux, uy), "?")]
+                    
+                    # 5. Extract and apply all moves
+                    moves = re.findall(r"(-?\d+),(-?\d+)", vector_in)
+                    for dx, dy in moves:
+                        curr = (curr[0] + int(dx), curr[1] + int(dy))
+                        ux, uy = untransform(curr[0], curr[1])
+                        decoded.append(coord_to_char.get((ux, uy), "?"))
+                    
+                    st.success(f"Decoded Message: {''.join(decoded)}")
+                except Exception as e:
+                    st.error("Error: Check your start point and vector format!")
