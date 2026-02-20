@@ -112,7 +112,7 @@ if kw:
     else:
         st.success(f"Matrix Active: [[{a},{b}],[{c},{d}]]")
         
-        tab1, tab2 = st.tabs(["Kiss""Tell"), 
+        tab1, tab2 = st.tabs(["Kiss""Tell"]), 
         
         with tab1:
             msg = st.text_input("Message to Scramble:").upper()
