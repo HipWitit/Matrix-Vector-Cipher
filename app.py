@@ -147,7 +147,7 @@ if kw:
             # (Decoding logic goes here similar to your first app)
 
         with tab2:
-            st.header("Reverse the Matrix")
+            st.header("Kissed Now Tell")
             col1, col2 = st.columns(2)
             with col1:
                 start_in = st.text_input("Start Point (x,y):", key="decode_start")
