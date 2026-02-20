@@ -128,7 +128,7 @@ if kw:
         tab1, tab2 = st.tabs(["Kiss","Tell"]) 
         
         with tab1:
-            msg = st.text_input("Cypher's Secret Kiss:").upper()
+            msg = st.text_input("Give Cypher A Kiss:").upper()
             if msg:
                 points = []
                 for char in msg:
