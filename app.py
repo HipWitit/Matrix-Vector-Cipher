@@ -1,8 +1,17 @@
 import streamlit as st
 import re
-st.set_page_config(page_title="Matrix Cipher", layout="centered")
+from PIL import Image
 
-# This CSS mimics your first app's dark theme
+# 1. Load your new art
+img = Image.open("1771559101438.png")
+
+# 2. Setup the page with your custom icon
+st.set_page_config(page_title="Matrix Cipher", page_icon=img, layout="centered")
+
+# 3. Put the art in the sidebar (replaces the abacus/header area)
+st.sidebar.image(img, use_container_width=True)
+st.sidebar.markdown("---")
+
 st.markdown("""
     <style>
     /* 1. Main Background stays Lavender */
