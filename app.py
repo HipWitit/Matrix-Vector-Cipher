@@ -4,6 +4,7 @@ st.set_page_config(page_title="Matrix Cipher", layout="centered")
 
 # This CSS mimics your first app's dark theme
 st.markdown("""
+
     <style>
     .stApp {
         background-color: #0E1117;
