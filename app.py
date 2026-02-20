@@ -35,12 +35,20 @@ st.markdown("""
         border: none !important;
     }
 
-    /* 3. Make the "Matrix Active" box true color */
-    .stAlert {
+        /* 3. True Mint & Periwinkle (No Overlays) */
+    div[data-testid="stAlert"] {
         background-color: #B2F2E3 !important;
         color: #5B618A !important;
         border: none !important;
+        opacity: 1 !important; /* Forces the true color */
     }
+    
+    /* This targets the icon inside the box so it matches too */
+    div[data-testid="stAlert"] svg {
+        fill: #5B618A !important;
+    }
+
+
 
     .stTabs [data-baseweb="tab"] {
         background-color: #E2E4FF !important;
