@@ -1,5 +1,31 @@
 import streamlit as st
 import re
+st.set_page_config(page_title="Matrix Cipher", layout="centered")
+
+# This CSS mimics your first app's dark theme
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #0E1117;
+        color: #FAFAFA;
+    }
+    .stTextInput>div>div>input {
+        color: #00FF00; /* Neon Green text like a matrix */
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 24px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: #161B22;
+        border-radius: 4px 4px 0px 0px;
+        gap: 1px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    </style>
+    """, unsafe_allow_index=True)
 
 # 1. YOUR MOD 31 FRIENDLY MAP
 char_to_coord = {
