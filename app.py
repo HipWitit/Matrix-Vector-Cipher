@@ -127,7 +127,7 @@ if kw:
         tab1, tab2 = st.tabs(["Kiss","Tell"]) 
         
         with tab1:
-            msg = st.text_input("Message to Scramble:").upper()
+            msg = st.text_input("Cypher's Secret:").upper()
             if msg:
                 points = []
                 for char in msg:
@@ -143,7 +143,7 @@ if kw:
                     st.code(f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}")
 
         with tab2:
-            st.info("Paste your coordinates here to reverse the matrix scramble.")
+            st.info("Paste Cypher's Kiss Below.")
             # (Decoding logic goes here similar to your first app)
 
         with tab2:
