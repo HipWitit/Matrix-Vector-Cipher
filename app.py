@@ -5,28 +5,36 @@ st.set_page_config(page_title="Matrix Cipher", layout="centered")
 # This CSS mimics your first app's dark theme
 st.markdown("""
     <style>
-    /* Background: Soft Lavender/Purple */
+    /* 1. Main Background stays Lavender */
     .stApp {
         background-color: #D1D5F9 !important;
         color: #5B618A !important;
     }
     
-    /* Input Boxes: Soft Pink */
-    div[data-baseweb="input"] {
+    /* 2. THE FIX: Change black boxes to Pink */
+    /* This targets the input areas for the Key and Message */
+    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
-        border: none !important;
-        border-radius: 10px !important;
-    }
-    
-    /* Text inside inputs: Subtle Purple */
-    input {
         color: #5B618A !important;
+        border-radius: 10px !important;
+        border: none !important;
     }
-    
-    /* Tabs: Matching the lavender/pink vibe */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
+
+    /* This removes the dark wrapper around the inputs */
+    div[data-baseweb="input"], div[data-baseweb="textarea"] {
+        background-color: transparent !important;
+        border: none !important;
     }
+
+    /* 3. Make the "Matrix Active" box a softer Green-Blue */
+    .stAlert {
+        background-color: #B2F2BB !important;
+        color: #2B543A !important;
+        border: none !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     .stTabs [data-baseweb="tab"] {
         background-color: #E2E4FF !important;
         border-radius: 10px 10px 0px 0px !important;
