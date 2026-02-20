@@ -71,6 +71,11 @@ st.markdown("""
         color: #5B618A !important;
         border: none !important;
     }
+       /* 4. Pink Label Fix */
+    label[data-testid="stWidgetLabel"] p {
+        color: #FFB6C1 !important;
+        font-weight: bold !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
