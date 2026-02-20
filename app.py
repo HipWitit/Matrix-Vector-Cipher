@@ -112,7 +112,7 @@ def modInverse(n, m=31):
 st.image(img, width=250)
 st.title("Cipher's Secret Love Language")
 
-kw = st.text_input("Keys Please", type="password").upper().strip()
+kw = st.text_input("Special Lips To Grant A Kiss ", type="password").upper().strip()
 
 if kw:
     a, b, c, d = get_matrix_elements(kw)
@@ -127,7 +127,7 @@ if kw:
         tab1, tab2 = st.tabs(["Kiss","Tell"]) 
         
         with tab1:
-            msg = st.text_input("Cypher's Secret:").upper()
+            msg = st.text_input("Cypher's Secret Kiss:").upper()
             if msg:
                 points = []
                 for char in msg:
