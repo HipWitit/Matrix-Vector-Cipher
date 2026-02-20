@@ -71,9 +71,9 @@ st.markdown("""
         color: #5B618A !important;
         border: none !important;
     }
-       /* 4. Pink Label Fix */
+       /* 4. Blue Label Fix */
     label[data-testid="stWidgetLabel"] p {
-        color: #FFB6C1 !important;
+        color: #7289DA !important;
         font-weight: bold !important;
     }
     </style>
