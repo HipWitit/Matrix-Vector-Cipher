@@ -4,29 +4,44 @@ st.set_page_config(page_title="Matrix Cipher", layout="centered")
 
 # This CSS mimics your first app's dark theme
 st.markdown("""
-
     <style>
+    /* Background: Soft Lavender/Purple */
     .stApp {
-        background-color: #0E1117;
-        color: #FAFAFA;
+        background-color: #D1D5F9 !important;
+        color: #5B618A !important;
     }
-    .stTextInput>div>div>input {
-        color: #00FF00; /* Neon Green text like a matrix */
+    
+    /* Input Boxes: Soft Pink */
+    div[data-baseweb="input"] {
+        background-color: #FEE2E9 !important;
+        border: none !important;
+        border-radius: 10px !important;
     }
+    
+    /* Text inside inputs: Subtle Purple */
+    input {
+        color: #5B618A !important;
+    }
+    
+    /* Tabs: Matching the lavender/pink vibe */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 24px;
+        gap: 10px;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 50px;
-        white-space: pre-wrap;
-        background-color: #161B22;
-        border-radius: 4px 4px 0px 0px;
-        gap: 1px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        background-color: #E2E4FF !important;
+        border-radius: 10px 10px 0px 0px !important;
+        color: #5B618A !important;
+    }
+    
+    /* Buttons: Soft Purple */
+    .stButton>button {
+        background-color: #C3C9F9 !important;
+        color: #5B618A !important;
+        border: none !important;
     }
     </style>
     """, unsafe_allow_html=True)
+
 
 # 1. YOUR MOD 31 FRIENDLY MAP
 char_to_coord = {
