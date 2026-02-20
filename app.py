@@ -76,6 +76,13 @@ st.markdown("""
         color: #7289DA !important;
         font-weight: bold !important;
     }
+        /* 5. Handwritten Title Style */
+    h1, h2 {
+        font-family: "Brush Script MT", cursive !important;
+        font-size: 3.5rem !important; /* Makes it big enough to read the cursive */
+        letter-spacing: 2px;
+    }
+
     </style>
     """, unsafe_allow_html=True)
 
