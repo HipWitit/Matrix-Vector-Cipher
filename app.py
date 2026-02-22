@@ -11,10 +11,12 @@ st.markdown("""
     .stApp { background-color: #E6E1F2 !important; }
     
     /* Labels: Lavender #B4A7D6 and Bold */
-    .stWidgetLabel p {
-        color: #8E7CC3 !important; 
-        font-weight: bold !important;
-        font-size: 18px !important;
+    .stWidgetLabel label {
+    color: #4B3F72 !important;
+    font-weight: bold !important;
+    font-size: 20px !important;
+}
+
     }
 
     /* Input Boxes */
