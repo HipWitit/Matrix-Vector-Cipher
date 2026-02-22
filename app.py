@@ -9,10 +9,7 @@ st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
 st.markdown("""
     <style>
-    /* Main Background */
     .stApp { background-color: #E6E1F2 !important; }
-    
-    /* Hide default labels */
     .stWidgetLabel p { display: none !important; }
 
     /* Input Boxes */
@@ -37,7 +34,7 @@ st.markdown("""
         text-decoration: none !important;
     }
 
-    /* THE FIX FOR THE COPY BUTTON */
+    /* Copy Button Styling */
     div[data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important;
         color: #FFD4E5 !important;
@@ -54,7 +51,6 @@ st.markdown("""
         border: none !important;
     }
 
-    /* Result Box Styling */
     .result-box {
         background-color: #FEE2E9; 
         color: #5B618A;
@@ -92,15 +88,17 @@ def modInverse(n, m=31):
 def clear_everything():
     st.session_state.lips = ""
     st.session_state.chem = ""
+    st.session_state.hint = ""
 
 # --- 3. UI LAYOUT ---
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
 
-kw = st.text_input("l1", type="password", label_visibility="collapsed", key="lips").upper().strip()
+kw = st.text_input("Key", type="password", label_visibility="collapsed", key="lips", placeholder="SECRET KEY").upper().strip()
+hint_text = st.text_input("Hint", label_visibility="collapsed", key="hint", placeholder="KEY HINT (Optional)")
 
 if os.path.exists("Kiss Chemistry.png"): st.image("Kiss Chemistry.png", use_container_width=True)
-user_input = st.text_area("l2", height=120, label_visibility="collapsed", key="chem")
+user_input = st.text_area("Message", height=120, label_visibility="collapsed", key="chem", placeholder="YOUR MESSAGE")
 
 output_placeholder = st.empty()
 
@@ -126,24 +124,28 @@ if kw and (kiss_btn or tell_btn):
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
                 
-                # Encode text for URLs
-                encoded_msg = urllib.parse.quote(emoji_res)
+                # Combine Message and Hint for sharing
+                final_share_msg = f"{emoji_res}\n\nHint: {hint_text}" if hint_text else emoji_res
+                encoded_msg = urllib.parse.quote(final_share_msg)
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    st_copy_to_clipboard(emoji_res, before_copy_label="COPY CHEMISTRY", after_copy_label="COPIED! 🩷")
+                    if hint_text:
+                        st.caption(f"Hint: {hint_text}")
                     
-                    # Sharing Buttons
+                    st_copy_to_clipboard(final_share_msg, before_copy_label="COPY CHEMISTRY & HINT", after_copy_label="COPIED! 🩷")
+                    
                     col1, col2 = st.columns(2)
                     with col1:
                         st.link_button("SEND TEXT 📱", f"sms:?&body={encoded_msg}", use_container_width=True)
                     with col2:
-                        # Messenger usually opens the app; pasting is manual
                         st.link_button("MESSENGER 💬", "fb-messenger://share", use_container_width=True)
 
         if tell_btn:
             try:
-                clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in user_input)
+                # Logic remains the same, but we strip out any hint text if the user pasted it back in
+                clean_input = user_input.split("Hint:")[0].strip()
+                clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in clean_input)
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
                 inv_c, inv_d = (-c * det_inv) % 31, (a * det_inv) % 31
                 header, moves_part = clean_msg.split("|")
@@ -158,4 +160,3 @@ if kw and (kiss_btn or tell_btn):
                 output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
-
