@@ -27,15 +27,16 @@ st.markdown("""
         border: none !important;
     }
     
-    /* Result Box Styling */
+    /* Your Perfect Result Box Styling */
     .result-box {
-        background-color: #FEE2E9; /* Changed to Pink to match your theme! */
+        background-color: #FEE2E9; 
         color: #5B618A;
         padding: 15px;
         border-radius: 10px;
         font-family: monospace;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         border: 2px solid #B4A7D6;
+        word-wrap: break-word;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -61,10 +62,12 @@ def modInverse(n, m=31):
         if (((n % m) * (x % m)) % m == 1): return x
     return None
 
-# --- 3. DESTROY FUNCTION ---
+# --- 3. FUNCTIONS ---
 def clear_everything():
     st.session_state.lips = ""
     st.session_state.chem = ""
+    if "last_emoji" in st.session_state:
+        st.session_state.last_emoji = ""
 
 # --- 4. UI LAYOUT ---
 if os.path.exists("CYPHER.png"):
@@ -78,13 +81,12 @@ if os.path.exists("Kiss Chemistry.png"):
     st.image("Kiss Chemistry.png", use_container_width=True)
 user_input = st.text_area("l2", height=120, label_visibility="collapsed", key="chem")
 
-# Placeholder for results
+# Placeholder for results and the copy button
 output_placeholder = st.empty()
 
-# Buttons
+# Main Buttons
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
-# This button now uses the 'on_click' clear function
 st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
 
 # --- 5. PROCESSING LOGIC ---
@@ -104,7 +106,15 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                output_placeholder.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
+                st.session_state.last_emoji = emoji_res
+                
+                # Show the result box + the copy button
+                with output_placeholder.container():
+                    st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
+                    if st.button("COPY CHEMISTRY", use_container_width=True):
+                        # Simple JavaScript trick to copy text
+                        st.write(f'<script>navigator.clipboard.writeText("{emoji_res}");</script>', unsafe_allow_html=True)
+                        st.toast("Copied to Clipboard! 🩷")
 
         if tell_btn:
             try:
@@ -120,7 +130,7 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Cypher Whispers: {''.join(decoded)}</span>", unsafe_allow_html=True)
+                
+                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
-
