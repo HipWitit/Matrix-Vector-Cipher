@@ -1,6 +1,7 @@
 import streamlit as st
 import re
 import os
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
@@ -18,16 +19,17 @@ st.markdown("""
     }
 
     /* Buttons */
-    div.stButton > button {
+    div.stButton > button, div[data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
         height: 50px !important;
         border: none !important;
+        width: 100% !important;
     }
     
-    /* Your Perfect Result Box Styling */
+    /* Result Box Styling */
     .result-box {
         background-color: #FEE2E9; 
         color: #5B618A;
@@ -45,7 +47,7 @@ st.markdown("""
 char_to_coord = {
     'Q': (2, 25), 'W': (5, 25), 'E': (8, 25), 'R': (11, 25), 'T': (14, 25), 'Y': (17, 25), 'U': (20, 25), 'I': (23, 25), 'O': (26, 25), 'P': (29, 25),
     'A': (3, 20), 'S': (6, 20), 'D': (9, 20), 'F': (12, 20), 'G': (15, 20), 'H': (18, 20), 'J': (21, 20), 'K': (24, 20), 'L': (27, 20),
-    'Z': (4, 15), 'X': (7, 15), 'C': (10, 15), 'V': (13, 15), 'B': (16, 15), 'N': (19, 15), 'M': (22, 15),
+    'Z': (4, 15), 'X': (7, 15), 'C': (10, 15), 'V': (13, 15), 'B': (16, 16), 'N': (19, 15), 'M': (22, 15),
     '1': (2, 10), '2': (5, 10), '3': (8, 10), '4': (11, 10), '5': (14, 10), '6': (17, 10), '7': (20, 10), '8': (23, 10), '9': (26, 10), '0': (29, 10),
     '!': (5, 5),  ',': (10, 5), '.': (15, 5), ' ': (20, 5), '?': (25, 5)
 }
@@ -66,8 +68,6 @@ def modInverse(n, m=31):
 def clear_everything():
     st.session_state.lips = ""
     st.session_state.chem = ""
-    if "last_emoji" in st.session_state:
-        st.session_state.last_emoji = ""
 
 # --- 4. UI LAYOUT ---
 if os.path.exists("CYPHER.png"):
@@ -81,10 +81,10 @@ if os.path.exists("Kiss Chemistry.png"):
     st.image("Kiss Chemistry.png", use_container_width=True)
 user_input = st.text_area("l2", height=120, label_visibility="collapsed", key="chem")
 
-# Placeholder for results and the copy button
+# Spot for the result box
 output_placeholder = st.empty()
 
-# Main Buttons
+# Buttons
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
 st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
@@ -106,15 +106,11 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                st.session_state.last_emoji = emoji_res
                 
-                # Show the result box + the copy button
+                # Render the pink box and the mobile-friendly copy button
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    if st.button("COPY CHEMISTRY", use_container_width=True):
-                        # Simple JavaScript trick to copy text
-                        st.write(f'<script>navigator.clipboard.writeText("{emoji_res}");</script>', unsafe_allow_html=True)
-                        st.toast("Copied to Clipboard! 🩷")
+                    st_copy_to_clipboard(emoji_res, before_copy_label="COPY CHEMISTRY", after_copy_label="COPIED! 🩷")
 
         if tell_btn:
             try:
