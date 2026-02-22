@@ -2,56 +2,60 @@ import streamlit as st
 import re
 import os
 import base64
+from PIL import Image
 
 # --- 1. CONFIG ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
-# Helper to turn local images into clickable web data
 def get_img_as_base64(file):
     if os.path.exists(file):
         with open(file, "rb") as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
+            return base64.b64encode(f.read()).decode()
     return None
 
 kiss_b64 = get_img_as_base64("Kiss.png")
 tell_b64 = get_img_as_base64("Tell.png")
 
-# --- 2. CSS FOR CLICKABLE IMAGES ---
-st.markdown("""
+# --- 2. THE FIX: SELECTIVE CSS ---
+st.markdown(f"""
     <style>
-    .stApp { background-color: #E6E1F2 !important; }
+    .stApp {{ background-color: #E6E1F2 !important; }}
     
-    /* This makes the real Streamlit button invisible but still clickable */
-    div.stButton > button {
+    /* Target ONLY the Kiss and Tell buttons using their unique keys */
+    div[data-testid="column"]:nth-of-type(1) button[kind="secondary"],
+    div[data-testid="column"]:nth-of-type(2) button[kind="secondary"] {{
         background-color: transparent !important;
         color: transparent !important;
         border: none !important;
-        height: 200px !important; /* Matches image height */
+        height: 180px !important;
         width: 100% !important;
         position: absolute;
         top: 0;
         left: 0;
         z-index: 10;
-    }
-    
-    /* Container to hold the image and the invisible button together */
-    .button-wrapper {
+    }}
+
+    .button-wrapper {{
         position: relative;
         text-align: center;
         width: 100%;
-    }
+        margin-bottom: 10px;
+    }}
     
-    .button-img {
+    .button-img {{
         width: 100%;
         border-radius: 15px;
         border: 4px solid #B4A7D6;
-    }
+    }}
+
+    /* Normal styling for Action Buttons */
+    .stButton > button {{
+        border-radius: 10px !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- 3. MATH ENGINE ---
-# (Keeping your same Vector Matrix logic)
 char_to_coord = {
     'Q': (2, 25), 'W': (5, 25), 'E': (8, 25), 'R': (11, 25), 'T': (14, 25), 'Y': (17, 25), 'U': (20, 25), 'I': (23, 25), 'O': (26, 25), 'P': (29, 25),
     'A': (3, 20), 'S': (6, 20), 'D': (9, 20), 'F': (12, 20), 'G': (15, 20), 'H': (18, 20), 'J': (21, 20), 'K': (24, 20), 'L': (27, 20),
@@ -79,28 +83,26 @@ if os.path.exists("CYPHER.png"):
 kw = st.text_input("Lock Your Lips Here", type="password").upper().strip()
 user_input = st.text_area("What's Your Kiss Chemistry?", height=150)
 
-# CUSTOM IMAGE BUTTONS
+# IMAGE BUTTONS
 col1, col2 = st.columns(2)
-
 with col1:
     st.markdown(f'<div class="button-wrapper"><img src="data:image/png;base64,{kiss_b64}" class="button-img">', unsafe_allow_html=True)
-    kiss_btn = st.button("KISS_TRIGGER") # This button is now invisible and covers the image
+    kiss_btn = st.button("KISS") 
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
     st.markdown(f'<div class="button-wrapper"><img src="data:image/png;base64,{tell_b64}" class="button-img">', unsafe_allow_html=True)
-    tell_btn = st.button("TELL_TRIGGER") # This button is now invisible and covers the image
+    tell_btn = st.button("TELL") 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Action Buttons
-st.markdown("---")
-if st.button("COPY KISS CHEMISTRY", use_container_width=True):
-    st.toast("Ready to copy!")
+# THE ACTION BUTTONS (RECOVERED)
+copy_btn = st.button("COPY SECRET CHEMISTRY", use_container_width=True)
+destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
 
-if st.button("DESTROY CHEMISTRY", use_container_width=True):
+if destroy_btn:
     st.rerun()
 
-# --- 5. PROCESSING LOGIC ---
+# --- 5. LOGIC ---
 if kw and (kiss_btn or tell_btn):
     a, b, c, d = get_matrix_elements(kw)
     det_inv = modInverse((a * d - b * c) % 31)
@@ -117,12 +119,12 @@ if kw and (kiss_btn or tell_btn):
             if points:
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
-                emoji_res = "".join(EMOJI_MAP.get(char, char) for char in raw_res)
+                emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
                 st.code(emoji_res)
         
         if tell_btn:
             try:
-                raw_text = "".join(REVERSE_EMOJI_MAP.get(char, char) for char in user_input)
+                raw_text = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in user_input)
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
                 inv_c, inv_d = (-c * det_inv) % 31, (a * det_inv) % 31
                 header, moves_part = raw_text.split("|")
@@ -134,8 +136,10 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
+                # Scrollable decode area
                 st.markdown(f"### Decoded: {''.join(decoded)}")
             except:
                 st.error("Chemistry Error!")
+
 
 
