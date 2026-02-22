@@ -18,7 +18,7 @@ st.markdown("""
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Standard Buttons */
+    /* Standard Buttons (KISS, TELL, DESTROY) */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
@@ -29,26 +29,33 @@ st.markdown("""
         width: 100% !important;
     }
 
-    /* FIXING THE COPY BUTTON COLORS */
-    /* This removes the border around the copy component's iframe */
+    /* FORCING THE COPY BUTTON TO BE PURPLE */
+    /* 1. Targets the frame the button lives in */
     iframe[title="st_copy_to_clipboard.st_copy_to_clipboard"] {
         border: none !important;
-        height: 70px !important;
+        background-color: transparent !important;
     }
 
-    /* This forces the button inside the copy component to be Purple */
+    /* 2. Targets the actual button inside that frame */
     div[data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important;
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
-        height: 50px !important;
+        height: 45px !important;
         border: none !important;
         width: 100% !important;
-        cursor: pointer !important;
+        box-shadow: none !important;
+    }
+
+    /* 3. Removes that pesky red/white hover effect */
+    div[data-testid="stCustomComponentV1"] button:hover {
+        background-color: #A394C7 !important;
+        color: #FFD4E5 !important;
+        border: none !important;
     }
     
-    /* Result Box Styling */
+    /* Your Pink Result Box */
     .result-box {
         background-color: #FEE2E9; 
         color: #5B618A;
@@ -83,7 +90,6 @@ def modInverse(n, m=31):
         if (((n % m) * (x % m)) % m == 1): return x
     return None
 
-# --- 3. UI RESET ---
 def clear_everything():
     st.session_state.lips = ""
     st.session_state.chem = ""
@@ -123,7 +129,7 @@ if kw and (kiss_btn or tell_btn):
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    # This now follows the purple theme!
+                    # The button that matches your theme
                     st_copy_to_clipboard(emoji_res, before_copy_label="COPY CHEMISTRY", after_copy_label="COPIED! 🩷")
 
         if tell_btn:
@@ -140,7 +146,7 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                
                 output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
+
