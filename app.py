@@ -15,20 +15,21 @@ st.markdown("""
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Make KISS, TELL, and DESTROY buttons Pink */
+    /* Make KISS, TELL, and DESTROY buttons Lavender (#B4A7D6) */
     div.stButton > button {
-        background-color: #FFB6C1 !important; 
-        color: #5B618A !important;
+        background-color: #B4A7D6 !important; 
+        color: white !important; /* White text for better contrast on lavender */
         font-weight: bold !important;
         border-radius: 15px !important;
         height: 50px !important;
-        border: 2px solid #FEE2E9 !important;
+        border: none !important;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     }
     
     /* Hover effect for buttons */
     div.stButton > button:hover {
-        border: 2px solid #FF69B4 !important;
-        color: #FF69B4 !important;
+        background-color: #9E8FC2 !important; /* Slightly darker on hover */
+        color: white !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -61,7 +62,7 @@ if os.path.exists("CYPHER.png"):
 kw = st.text_input("Lock Your Lips Here", type="password").upper().strip()
 user_input = st.text_area("What's Your Kiss Chemistry?", height=120)
 
-# The New Pink Button Stack
+# The Lavender Button Stack
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
 destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
@@ -83,7 +84,7 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                st.code(emoji_res) # This box usually has a one-click copy icon
+                st.code(emoji_res) # Copyable emoji output
 
         if tell_btn:
             try:
@@ -99,12 +100,14 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
+                # Styled Decoded Output
                 st.markdown(f"### Decoded: {''.join(decoded)}")
             except:
                 st.error("Chemistry Error!")
 
 if destroy_btn:
     st.rerun()
+
 
 
 
