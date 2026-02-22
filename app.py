@@ -10,18 +10,11 @@ st.markdown("""
     /* Background */
     .stApp { background-color: #E6E1F2 !important; }
     
+    /* Labels: Lavender #B4A7D6 and Bold */
     .stWidgetLabel p {
-    color: #B4A7D6 !important;
-    font-weight: bold !important;
-    font-size: 18px !important;
-}
-
-}
-
-}
-
-}
-
+        color: #8E7CC3 !important; 
+        font-weight: bold !important;
+        font-size: 18px !important;
     }
 
     /* Input Boxes */
@@ -127,6 +120,15 @@ if kw and (kiss_btn or tell_btn):
 
 if destroy_btn:
     st.rerun()
+
+
+
+
+
+
+
+
+
 
 
 
