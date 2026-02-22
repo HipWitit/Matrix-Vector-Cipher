@@ -29,13 +29,13 @@ st.markdown("""
     
     /* Result Box Styling */
     .result-box {
-        background-color: #1A1C23;
-        color: #FFD4E5;
+        background-color: #FEE2E9; /* Changed to Pink to match your theme! */
+        color: #5B618A;
         padding: 15px;
         border-radius: 10px;
         font-family: monospace;
         margin-bottom: 20px;
-        border: 1px solid #B4A7D6;
+        border: 2px solid #B4A7D6;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -61,38 +61,33 @@ def modInverse(n, m=31):
         if (((n % m) * (x % m)) % m == 1): return x
     return None
 
-# --- 3. UI LAYOUT ---
+# --- 3. DESTROY FUNCTION ---
+def clear_everything():
+    st.session_state.lips = ""
+    st.session_state.chem = ""
+
+# --- 4. UI LAYOUT ---
 if os.path.exists("CYPHER.png"):
     st.image("CYPHER.png", use_container_width=True)
 
 if os.path.exists("Lock Lips.png"):
     st.image("Lock Lips.png", use_container_width=True)
-# Key="lips" lets the destroy button find it
 kw = st.text_input("l1", type="password", label_visibility="collapsed", key="lips").upper().strip()
 
 if os.path.exists("Kiss Chemistry.png"):
     st.image("Kiss Chemistry.png", use_container_width=True)
-# Key="chem" lets the destroy button find it
 user_input = st.text_area("l2", height=120, label_visibility="collapsed", key="chem")
 
-# Create a spot for the output that can be emptied
-output_container = st.empty()
+# Placeholder for results
+output_placeholder = st.empty()
 
 # Buttons
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
-destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
+# This button now uses the 'on_click' clear function
+st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
 
-# --- 4. DESTROY LOGIC ---
-if destroy_btn:
-    # This wipes the memory for both input boxes
-    if "lips" in st.session_state: st.session_state.lips = ""
-    if "chem" in st.session_state: st.session_state.chem = ""
-    # This wipes the output container
-    output_container.empty()
-    st.rerun()
-
-# --- 5. PROCESSING ---
+# --- 5. PROCESSING LOGIC ---
 if kw and (kiss_btn or tell_btn):
     a, b, c, d = get_matrix_elements(kw)
     det_inv = modInverse((a * d - b * c) % 31)
@@ -109,8 +104,7 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                # Show the result in the container
-                output_container.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
+                output_placeholder.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
 
         if tell_btn:
             try:
@@ -126,6 +120,7 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                output_container.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
+                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
+
