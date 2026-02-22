@@ -7,22 +7,17 @@ st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
 st.markdown("""
     <style>
-    /* Background */
     .stApp { background-color: #E6E1F2 !important; }
-    
-    /* Hide the default text labels entirely */
-    .stWidgetLabel p {
-        display: none !important;
-    }
+    .stWidgetLabel p { display: none !important; }
 
-    /* Input Boxes - Pink Theme */
+    /* Input Boxes */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
         color: #5B618A !important; 
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Buttons: Lavender Background with Pink Font */
+    /* Buttons */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
@@ -30,18 +25,17 @@ st.markdown("""
         border-radius: 15px !important;
         height: 50px !important;
         border: none !important;
-        margin-top: 10px !important;
     }
     
-    div.stButton > button:hover {
-        background-color: #9E8FC2 !important;
-        color: white !important;
-    }
-    
-    /* Emoji Output Box Styling */
-    code {
-        color: #B4A7D6 !important;
-        background-color: #FEE2E9 !important;
+    /* Result Box Styling */
+    .result-box {
+        background-color: #1A1C23;
+        color: #FFD4E5;
+        padding: 15px;
+        border-radius: 10px;
+        font-family: monospace;
+        margin-bottom: 20px;
+        border: 1px solid #B4A7D6;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -73,29 +67,32 @@ if os.path.exists("CYPHER.png"):
 
 if os.path.exists("Lock Lips.png"):
     st.image("Lock Lips.png", use_container_width=True)
+# Key="lips" lets the destroy button find it
 kw = st.text_input("l1", type="password", label_visibility="collapsed", key="lips").upper().strip()
 
 if os.path.exists("Kiss Chemistry.png"):
     st.image("Kiss Chemistry.png", use_container_width=True)
-user_input = st.text_area("l2", height=120, label_visibility="collapsed", key="chemistry")
+# Key="chem" lets the destroy button find it
+user_input = st.text_area("l2", height=120, label_visibility="collapsed", key="chem")
 
-# This placeholder is the secret to clearing the emoji box!
-output_placeholder = st.empty()
+# Create a spot for the output that can be emptied
+output_container = st.empty()
 
 # Buttons
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
 destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
 
-# --- 4. PROCESSING LOGIC ---
+# --- 4. DESTROY LOGIC ---
 if destroy_btn:
-    # Clear the session state keys for the inputs
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
-    # This specifically wipes the emoji box visually
-    output_placeholder.empty()
+    # This wipes the memory for both input boxes
+    if "lips" in st.session_state: st.session_state.lips = ""
+    if "chem" in st.session_state: st.session_state.chem = ""
+    # This wipes the output container
+    output_container.empty()
     st.rerun()
 
+# --- 5. PROCESSING ---
 if kw and (kiss_btn or tell_btn):
     a, b, c, d = get_matrix_elements(kw)
     det_inv = modInverse((a * d - b * c) % 31)
@@ -112,8 +109,8 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                # We put the result inside the placeholder
-                output_placeholder.code(emoji_res) 
+                # Show the result in the container
+                output_container.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
 
         if tell_btn:
             try:
@@ -129,7 +126,6 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                # We put the decoded text inside the placeholder too
-                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
+                output_container.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
