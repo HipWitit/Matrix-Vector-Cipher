@@ -11,9 +11,11 @@ st.markdown("""
     .stApp { background-color: #E6E1F2 !important; }
     
     .stWidgetLabel p {
-    color: #8E7CC3 !important;
+    color: #B4A7D6 !important;
     font-weight: bold !important;
     font-size: 18px !important;
+}
+
 }
 
 }
