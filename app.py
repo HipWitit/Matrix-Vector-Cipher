@@ -6,7 +6,6 @@ from st_copy_to_clipboard import st_copy_to_clipboard
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
-# The CSS below is updated to be much more "aggressive" to catch that stubborn button
 st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
@@ -19,7 +18,7 @@ st.markdown("""
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Standard Buttons styling */
+    /* Standard Buttons (KISS, TELL, DESTROY) */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
@@ -30,36 +29,34 @@ st.markdown("""
         width: 100% !important;
     }
 
-    /* FIXING THE STUBBORN COPY BUTTON */
-    /* This reaches into the component frame and forces the colors */
-    [data-testid="stCustomComponentV1"] iframe {
-        border: none !important;
-        background-color: transparent !important;
-    }
-
-    /* Universal target for any button inside a custom component */
+    /* THE ULTIMATE FIX FOR THE COPY BUTTON */
+    /* This targets the "Component Island" and forces the button inside to be purple */
     [data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important;
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
-        height: 50px !important;
-        border: 2px solid #B4A7D6 !important; /* Matches purple to hide the red */
+        height: 45px !important;
+        border: none !important;
         width: 100% !important;
         box-shadow: none !important;
+        cursor: pointer !important;
     }
 
-    /* Prevents the white/red hover effect you're seeing */
-    [data-testid="stCustomComponentV1"] button:hover, 
-    [data-testid="stCustomComponentV1"] button:active,
-    [data-testid="stCustomComponentV1"] button:focus {
+    /* This removes the red border and white background frame */
+    [data-testid="stCustomComponentV1"] iframe {
+        border: none !important;
+        background-color: transparent !important;
+    }
+
+    /* Keeps the button purple even when you hover over it */
+    [data-testid="stCustomComponentV1"] button:hover {
         background-color: #A394C7 !important;
         color: #FFD4E5 !important;
-        border: 2px solid #A394C7 !important;
-        outline: none !important;
+        border: none !important;
     }
     
-    /* Result Box styling */
+    /* Your Pink Result Box */
     .result-box {
         background-color: #FEE2E9; 
         color: #5B618A;
@@ -111,46 +108,5 @@ output_placeholder = st.empty()
 
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
-st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
-
-# --- 5. PROCESSING LOGIC ---
-if kw and (kiss_btn or tell_btn):
-    a, b, c, d = get_matrix_elements(kw)
-    det_inv = modInverse((a * d - b * c) % 31)
-    
-    if det_inv:
-        if kiss_btn:
-            points = []
-            for char in user_input.upper():
-                if char in char_to_coord:
-                    x, y = char_to_coord[char]
-                    nx, ny = (a*x + b*y) % 31, (c*x + d*y) % 31
-                    points.append((nx, ny))
-            if points:
-                moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
-                raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
-                emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                
-                with output_placeholder.container():
-                    st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    # This now follows the forced purple theme!
-                    st_copy_to_clipboard(emoji_res, before_copy_label="COPY CHEMISTRY", after_copy_label="COPIED! 🩷")
-
-        if tell_btn:
-            try:
-                clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in user_input)
-                inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
-                inv_c, inv_d = (-c * det_inv) % 31, (a * det_inv) % 31
-                header, moves_part = clean_msg.split("|")
-                h_nums = re.findall(r"(-?\d+)", header)
-                curr_x, curr_y = int(h_nums[0]), int(h_nums[1])
-                ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
-                decoded = [coord_to_char.get((ux, uy), "?")]
-                for dx, dy in re.findall(r"(-?\d+),(-?\d+)", moves_part):
-                    curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
-                    ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
-                    decoded.append(coord_to_char.get((ux, uy), "?"))
-                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
-            except:
-                st.error("Chemistry Error!")
+st.button
 
