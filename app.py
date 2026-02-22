@@ -141,5 +141,14 @@ if kw and (kiss_btn or tell_btn):
                 inv_c, inv_d = (-c * det_inv) % 31, (a * det_inv) % 31
                 header, moves_part = clean_msg.split("|")
                 h_nums = re.findall(r"(-?\d+)", header)
-                curr_x, curr_y = int
+                curr_x, curr_y = int(h_nums[0]), int(h_nums[1])
+                ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
+                decoded = [coord_to_char.get((ux, uy), "?")]
+                for dx, dy in re.findall(r"(-?\d+),(-?\d+)", moves_part):
+                    curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
+                    ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
+                    decoded.append(coord_to_char.get((ux, uy), "?"))
+                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
+            except:
+                st.error("Chemistry Error!")
 
