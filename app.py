@@ -2,12 +2,12 @@ import streamlit as st
 import re
 import os
 
-# --- 1. CONFIG & STYLE ---
+# --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
 st.markdown("""
     <style>
-    /* Background and Text Area Colors */
+    /* Background and Input Colors */
     .stApp { background-color: #E6E1F2 !important; }
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
@@ -15,9 +15,8 @@ st.markdown("""
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Target KISS and TELL specifically to be Pink */
-    div[data-testid="stVerticalBlock"] > div:nth-child(3) button,
-    div[data-testid="stVerticalBlock"] > div:nth-child(4) button {
+    /* Make KISS, TELL, and DESTROY buttons Pink */
+    div.stButton > button {
         background-color: #FFB6C1 !important; 
         color: #5B618A !important;
         font-weight: bold !important;
@@ -25,13 +24,11 @@ st.markdown("""
         height: 50px !important;
         border: 2px solid #FEE2E9 !important;
     }
-
-    /* Copy and Destroy stay dark and sleek */
-    div[data-testid="stVerticalBlock"] > div:nth-child(5) button,
-    div[data-testid="stVerticalBlock"] > div:nth-child(6) button {
-        background-color: #262730 !important;
-        color: white !important;
-        border-radius: 10px !important;
+    
+    /* Hover effect for buttons */
+    div.stButton > button:hover {
+        border: 2px solid #FF69B4 !important;
+        color: #FF69B4 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -64,10 +61,9 @@ if os.path.exists("CYPHER.png"):
 kw = st.text_input("Lock Your Lips Here", type="password").upper().strip()
 user_input = st.text_area("What's Your Kiss Chemistry?", height=120)
 
-# Vertical Buttons to match your latest screenshot
+# The New Pink Button Stack
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
-copy_btn = st.button("COPY SECRET CHEMISTRY", use_container_width=True)
 destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
 
 # --- 4. PROCESSING LOGIC ---
@@ -87,8 +83,7 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                st.session_state['latest_result'] = emoji_res
-                st.code(emoji_res)
+                st.code(emoji_res) # This box usually has a one-click copy icon
 
         if tell_btn:
             try:
@@ -108,17 +103,7 @@ if kw and (kiss_btn or tell_btn):
             except:
                 st.error("Chemistry Error!")
 
-# --- 5. THE FIX FOR COPY ---
-if copy_btn:
-    if 'latest_result' in st.session_state:
-        # Opens a text box that is automatically focused/selectable on mobile
-        st.text_area("Long-press to select all & copy:", value=st.session_state['latest_result'], height=100)
-        st.toast("Ready for your clipboard!")
-    else:
-        st.warning("No chemistry to copy yet!")
-
 if destroy_btn:
-    st.session_state.clear()
     st.rerun()
 
 
