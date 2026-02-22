@@ -1,6 +1,7 @@
 import streamlit as st
 import re
 import os
+import urllib.parse
 from st_copy_to_clipboard import st_copy_to_clipboard
 
 # --- 1. CONFIG & STYLING ---
@@ -14,15 +15,15 @@ st.markdown("""
     /* Hide default labels */
     .stWidgetLabel p { display: none !important; }
 
-    /* Input Boxes (Text and Area) */
+    /* Input Boxes */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
         color: #5B618A !important; 
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Standard Buttons (KISS, TELL, DESTROY) */
-    div.stButton > button {
+    /* Standard Buttons & Link Buttons */
+    div.stButton > button, div.stLinkButton > a {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         font-weight: bold !important;
@@ -30,32 +31,29 @@ st.markdown("""
         height: 50px !important;
         border: none !important;
         width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
     }
 
-    /* THE FINAL FIX FOR THE COPY BUTTON */
-    /* This targets the 'Shadow DOM' that usually stays white/red */
+    /* THE FIX FOR THE COPY BUTTON */
     div[data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important;
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
         height: 45px !important; 
-        border: none !important; /* REMOVES RED BORDER */
+        border: none !important;
         width: 100% !important;
         box-shadow: none !important;
     }
 
-    /* Clears the white container background */
     div[data-testid="stCustomComponentV1"] iframe {
         background-color: transparent !important;
         border: none !important;
     }
 
-    /* Hover effect for the copy button */
-    div[data-testid="stCustomComponentV1"] button:hover {
-        background-color: #A394C7 !important;
-    }
-    
     /* Result Box Styling */
     .result-box {
         background-color: #FEE2E9; 
@@ -128,10 +126,20 @@ if kw and (kiss_btn or tell_btn):
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
                 
+                # Encode text for URLs
+                encoded_msg = urllib.parse.quote(emoji_res)
+                
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    # The aggressive styling above fixes this component!
                     st_copy_to_clipboard(emoji_res, before_copy_label="COPY CHEMISTRY", after_copy_label="COPIED! 🩷")
+                    
+                    # Sharing Buttons
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.link_button("SEND TEXT 📱", f"sms:?&body={encoded_msg}", use_container_width=True)
+                    with col2:
+                        # Messenger usually opens the app; pasting is manual
+                        st.link_button("MESSENGER 💬", "fb-messenger://share", use_container_width=True)
 
         if tell_btn:
             try:
@@ -150,3 +158,4 @@ if kw and (kiss_btn or tell_btn):
                 output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
+
