@@ -10,33 +10,34 @@ st.markdown("""
     /* Background and Input Colors */
     .stApp { background-color: #E6E1F2 !important; }
     
-    /* Change 'Lock Your Lips Here' and 'What's Your Kiss Chemistry?' font color */
+    /* Change 'Lock Your Lips Here' and 'What's Your Kiss Chemistry?' to #B4A7D6 */
     .stWidgetLabel p {
-        color: #5B618A !important; 
+        color: #B4A7D6 !important; 
         font-weight: bold !important;
+        font-size: 18px !important;
     }
 
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
-        color: #5B618A !important; /* Deep purple text inside boxes */
+        color: #5B618A !important; 
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Make KISS, TELL, and DESTROY buttons Lavender (#B4A7D6) with Purple Font */
+    /* Make KISS, TELL, and DESTROY buttons Lavender with #B4A7D6 Font */
     div.stButton > button {
-        background-color: #B4A7D6 !important; 
-        color: #4B3F72 !important; /* Changed from white to deep purple for readability */
+        background-color: #FEE2E9 !important; /* Soft Pink Button Background */
+        color: #B4A7D6 !important; /* Lavender Font Color */
         font-weight: bold !important;
         border-radius: 15px !important;
         height: 50px !important;
-        border: none !important;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        border: 2px solid #B4A7D6 !important;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
     }
     
     /* Hover effect */
     div.stButton > button:hover {
-        background-color: #9E8FC2 !important;
-        color: #FEE2E9 !important; /* Light pink text on hover */
+        background-color: #B4A7D6 !important;
+        color: white !important; /* Invert colors on hover for feedback */
     }
     </style>
     """, unsafe_allow_html=True)
@@ -69,7 +70,7 @@ if os.path.exists("CYPHER.png"):
 kw = st.text_input("Lock Your Lips Here", type="password").upper().strip()
 user_input = st.text_area("What's Your Kiss Chemistry?", height=120)
 
-# The Lavender Button Stack
+# Buttons
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
 destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
@@ -107,7 +108,7 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                st.markdown(f"### Decoded: {''.join(decoded)}")
+                st.markdown(f"<p style='color:#B4A7D6; font-weight:bold; font-size:20px;'>Decoded: {''.join(decoded)}</p>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
 
