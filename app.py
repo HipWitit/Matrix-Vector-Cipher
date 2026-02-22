@@ -27,7 +27,7 @@ st.markdown("""
     /* Buttons: Lavender Background #B4A7D6 with Clear White Font */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
-        color: white !important; /* White text for perfect contrast */
+        color: #FFD4E5 !important; /* pink text for perfect contrast */
         font-weight: bold !important;
         border-radius: 15px !important;
         height: 50px !important;
