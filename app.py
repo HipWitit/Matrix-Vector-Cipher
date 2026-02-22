@@ -71,17 +71,16 @@ def modInverse(n, m=31):
 if os.path.exists("CYPHER.png"):
     st.image("CYPHER.png", use_container_width=True)
 
-# Image Label 1
 if os.path.exists("Lock Lips.png"):
     st.image("Lock Lips.png", use_container_width=True)
-# Key="lips" allows us to clear this box manually
 kw = st.text_input("l1", type="password", label_visibility="collapsed", key="lips").upper().strip()
 
-# Image Label 2
 if os.path.exists("Kiss Chemistry.png"):
     st.image("Kiss Chemistry.png", use_container_width=True)
-# Key="chemistry" allows us to clear this box manually
 user_input = st.text_area("l2", height=120, label_visibility="collapsed", key="chemistry")
+
+# This placeholder is the secret to clearing the emoji box!
+output_placeholder = st.empty()
 
 # Buttons
 kiss_btn = st.button("KISS", use_container_width=True)
@@ -90,9 +89,11 @@ destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
 
 # --- 4. PROCESSING LOGIC ---
 if destroy_btn:
-    # Clear the session state keys to wipe the boxes and emoji output
-    for key in st.session_state.keys():
+    # Clear the session state keys for the inputs
+    for key in list(st.session_state.keys()):
         del st.session_state[key]
+    # This specifically wipes the emoji box visually
+    output_placeholder.empty()
     st.rerun()
 
 if kw and (kiss_btn or tell_btn):
@@ -111,8 +112,8 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                # This displays the emoji box you wanted to clear
-                st.code(emoji_res) 
+                # We put the result inside the placeholder
+                output_placeholder.code(emoji_res) 
 
         if tell_btn:
             try:
@@ -128,7 +129,7 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                st.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
+                # We put the decoded text inside the placeholder too
+                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
-
