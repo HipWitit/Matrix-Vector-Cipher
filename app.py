@@ -12,7 +12,7 @@ st.markdown("""
     
     /* Labels: Lavender #B4A7D6 and Bold */
     .stWidgetLabel p {
-        color: #B4A7D6 !important; 
+        color: #8E7CC3 !important; 
         font-weight: bold !important;
         font-size: 18px !important;
     }
