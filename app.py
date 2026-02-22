@@ -10,24 +10,22 @@ st.markdown("""
     /* Background */
     .stApp { background-color: #E6E1F2 !important; }
     
-    /* Labels: Lavender #B4A7D6 and Bold */
+    /* Hide default labels since we are using images */
     .stWidgetLabel p {
-        color: #8E7CC3 !important; 
-        font-weight: bold !important;
-        font-size: 18px !important;
+        display: none;
     }
 
-    /* Input Boxes */
+    /* Input Boxes - Keeping your Pink Theme */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
         color: #5B618A !important; 
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Buttons: Lavender Background #B4A7D6 with Clear White Font */
+    /* Buttons: Lavender Background with Pink Font */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
-        color: #FFD4E5 !important; /* pink text for perfect contrast */
+        color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
         height: 50px !important;
@@ -72,10 +70,19 @@ def modInverse(n, m=31):
 if os.path.exists("CYPHER.png"):
     st.image("CYPHER.png", use_container_width=True)
 
-kw = st.text_input("Lock Your Lips Here", type="password").upper().strip()
-user_input = st.text_area("What's Your Kiss Chemistry?", height=120)
+# Replacing Label 1 with your image
+if os.path.exists("Lock Lips.png"):
+    st.image("Lock Lips.png", width=350)
+kw = st.text_input("hidden_label_1", type="password", label_visibility="collapsed").upper().strip()
 
-# Layout matching your recent screenshots
+st.write("") # Spacer
+
+# Replacing Label 2 with your image
+if os.path.exists("Kiss Chemistry.png"):
+    st.image("Kiss Chemistry.png", width=450)
+user_input = st.text_area("hidden_label_2", height=120, label_visibility="collapsed")
+
+# Buttons
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
 destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
@@ -113,13 +120,13 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                # Results in Lavender
                 st.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
 
 if destroy_btn:
     st.rerun()
+
 
 
 
