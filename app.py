@@ -10,12 +10,12 @@ st.markdown("""
     /* Background */
     .stApp { background-color: #E6E1F2 !important; }
     
-    /* Hide default labels since we are using images */
+    /* Hide the default text labels entirely */
     .stWidgetLabel p {
-        display: none;
+        display: none !important;
     }
 
-    /* Input Boxes - Keeping your Pink Theme */
+    /* Input Boxes - Pink Theme */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
         color: #5B618A !important; 
@@ -30,17 +30,18 @@ st.markdown("""
         border-radius: 15px !important;
         height: 50px !important;
         border: none !important;
+        margin-top: 10px !important;
     }
     
-    /* Hover state */
     div.stButton > button:hover {
         background-color: #9E8FC2 !important;
         color: white !important;
     }
     
-    /* The Output Code Box */
+    /* Emoji Output Box Styling */
     code {
         color: #B4A7D6 !important;
+        background-color: #FEE2E9 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -70,17 +71,17 @@ def modInverse(n, m=31):
 if os.path.exists("CYPHER.png"):
     st.image("CYPHER.png", use_container_width=True)
 
-# Replacing Label 1 with your image
+# Image Label 1
 if os.path.exists("Lock Lips.png"):
-    st.image("Lock Lips.png", width=350)
-kw = st.text_input("hidden_label_1", type="password", label_visibility="collapsed").upper().strip()
+    st.image("Lock Lips.png", use_container_width=True)
+# Key="lips" allows us to clear this box manually
+kw = st.text_input("l1", type="password", label_visibility="collapsed", key="lips").upper().strip()
 
-st.write("") # Spacer
-
-# Replacing Label 2 with your image
+# Image Label 2
 if os.path.exists("Kiss Chemistry.png"):
-    st.image("Kiss Chemistry.png", width=450)
-user_input = st.text_area("hidden_label_2", height=120, label_visibility="collapsed")
+    st.image("Kiss Chemistry.png", use_container_width=True)
+# Key="chemistry" allows us to clear this box manually
+user_input = st.text_area("l2", height=120, label_visibility="collapsed", key="chemistry")
 
 # Buttons
 kiss_btn = st.button("KISS", use_container_width=True)
@@ -88,6 +89,12 @@ tell_btn = st.button("TELL", use_container_width=True)
 destroy_btn = st.button("DESTROY CHEMISTRY", use_container_width=True)
 
 # --- 4. PROCESSING LOGIC ---
+if destroy_btn:
+    # Clear the session state keys to wipe the boxes and emoji output
+    for key in st.session_state.keys():
+        del st.session_state[key]
+    st.rerun()
+
 if kw and (kiss_btn or tell_btn):
     a, b, c, d = get_matrix_elements(kw)
     det_inv = modInverse((a * d - b * c) % 31)
@@ -104,6 +111,7 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
+                # This displays the emoji box you wanted to clear
                 st.code(emoji_res) 
 
         if tell_btn:
@@ -123,25 +131,4 @@ if kw and (kiss_btn or tell_btn):
                 st.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
-
-if destroy_btn:
-    st.rerun()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
