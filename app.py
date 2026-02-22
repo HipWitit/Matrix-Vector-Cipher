@@ -8,10 +8,13 @@ st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
 st.markdown("""
     <style>
+    /* Main Background */
     .stApp { background-color: #E6E1F2 !important; }
+    
+    /* Hide default labels */
     .stWidgetLabel p { display: none !important; }
 
-    /* Input Boxes */
+    /* Input Boxes (Text and Area) */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
         color: #5B618A !important; 
@@ -29,32 +32,28 @@ st.markdown("""
         width: 100% !important;
     }
 
-    /* THE ULTIMATE FIX FOR THE COPY BUTTON */
-    /* This targets the stubborn "Component Island" specifically */
-    [data-testid="stCustomComponentV1"] iframe {
-        border: none !important;
-        background-color: transparent !important;
-        height: 70px !important;
-    }
-
-    /* This forces the internal button to be Purple and removes the Red Border */
-    [data-testid="stCustomComponentV1"] button {
+    /* THE FINAL FIX FOR THE COPY BUTTON */
+    /* This targets the 'Shadow DOM' that usually stays white/red */
+    div[data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important;
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
-        height: 50px !important;
-        border: none !important;
+        height: 45px !important; 
+        border: none !important; /* REMOVES RED BORDER */
         width: 100% !important;
         box-shadow: none !important;
     }
 
-    /* Prevents the white/red flicker when you click it */
-    [data-testid="stCustomComponentV1"] button:hover, 
-    [data-testid="stCustomComponentV1"] button:active {
-        background-color: #A394C7 !important;
-        color: #FFD4E5 !important;
+    /* Clears the white container background */
+    div[data-testid="stCustomComponentV1"] iframe {
+        background-color: transparent !important;
         border: none !important;
+    }
+
+    /* Hover effect for the copy button */
+    div[data-testid="stCustomComponentV1"] button:hover {
+        background-color: #A394C7 !important;
     }
     
     /* Result Box Styling */
@@ -96,7 +95,7 @@ def clear_everything():
     st.session_state.lips = ""
     st.session_state.chem = ""
 
-# --- 4. UI LAYOUT ---
+# --- 3. UI LAYOUT ---
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
 
@@ -111,7 +110,7 @@ kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
 st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
 
-# --- 5. PROCESSING LOGIC ---
+# --- 4. PROCESSING LOGIC ---
 if kw and (kiss_btn or tell_btn):
     a, b, c, d = get_matrix_elements(kw)
     det_inv = modInverse((a * d - b * c) % 31)
@@ -131,7 +130,7 @@ if kw and (kiss_btn or tell_btn):
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    # This now follows the forced purple theme!
+                    # The aggressive styling above fixes this component!
                     st_copy_to_clipboard(emoji_res, before_copy_label="COPY CHEMISTRY", after_copy_label="COPIED! 🩷")
 
         if tell_btn:
