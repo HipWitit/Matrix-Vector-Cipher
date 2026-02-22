@@ -151,4 +151,3 @@ if kw and (kiss_btn or tell_btn):
                 output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
-
