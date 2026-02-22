@@ -6,6 +6,7 @@ from st_copy_to_clipboard import st_copy_to_clipboard
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
+# The CSS below is updated to be much more "aggressive" to catch that stubborn button
 st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
@@ -18,7 +19,7 @@ st.markdown("""
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Standard Buttons (KISS, TELL, DESTROY) */
+    /* Standard Buttons styling */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
@@ -29,33 +30,36 @@ st.markdown("""
         width: 100% !important;
     }
 
-    /* FORCING THE COPY BUTTON TO BE PURPLE */
-    /* 1. Targets the frame the button lives in */
-    iframe[title="st_copy_to_clipboard.st_copy_to_clipboard"] {
+    /* FIXING THE STUBBORN COPY BUTTON */
+    /* This reaches into the component frame and forces the colors */
+    [data-testid="stCustomComponentV1"] iframe {
         border: none !important;
         background-color: transparent !important;
     }
 
-    /* 2. Targets the actual button inside that frame */
-    div[data-testid="stCustomComponentV1"] button {
+    /* Universal target for any button inside a custom component */
+    [data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important;
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
-        height: 45px !important;
-        border: none !important;
+        height: 50px !important;
+        border: 2px solid #B4A7D6 !important; /* Matches purple to hide the red */
         width: 100% !important;
         box-shadow: none !important;
     }
 
-    /* 3. Removes that pesky red/white hover effect */
-    div[data-testid="stCustomComponentV1"] button:hover {
+    /* Prevents the white/red hover effect you're seeing */
+    [data-testid="stCustomComponentV1"] button:hover, 
+    [data-testid="stCustomComponentV1"] button:active,
+    [data-testid="stCustomComponentV1"] button:focus {
         background-color: #A394C7 !important;
         color: #FFD4E5 !important;
-        border: none !important;
+        border: 2px solid #A394C7 !important;
+        outline: none !important;
     }
     
-    /* Your Pink Result Box */
+    /* Result Box styling */
     .result-box {
         background-color: #FEE2E9; 
         color: #5B618A;
@@ -129,7 +133,7 @@ if kw and (kiss_btn or tell_btn):
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    # The button that matches your theme
+                    # This now follows the forced purple theme!
                     st_copy_to_clipboard(emoji_res, before_copy_label="COPY CHEMISTRY", after_copy_label="COPIED! 🩷")
 
         if tell_btn:
