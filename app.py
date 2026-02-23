@@ -19,25 +19,23 @@ st.markdown("""
         color: #B4A7D6 !important; 
         border: 2px solid #B4A7D6 !important;
         font-family: "Courier New", Courier, monospace !important;
-        font-size: 22px !important;
+        font-size: 18px !important;
         font-weight: bold !important;
     }
 
-    /* --- THE ULTIMATE CSS HACK FOR MASSIVE BUTTON FONT --- */
-    /* This targets the actual text paragraph inside the Streamlit button */
+    /* THE "GOLDILOCKS" BUTTONS (Just Right) */
     div.stButton > button p {
-        font-size: 100px !important; 
-        font-weight: 900 !important;
+        font-size: 45px !important; /* Bold but readable */
+        font-weight: 800 !important;
         line-height: 1.1 !important;
         margin: 0 !important;
-        padding: 10px 0 !important;
     }
 
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
-        border-radius: 20px !important;
-        min-height: 150px !important; /* Make button tall enough for the text */
+        border-radius: 15px !important;
+        min-height: 90px !important; 
         height: auto !important;     
         border: none !important;
         width: 100% !important;
@@ -45,9 +43,17 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* ENCODED BOX */
+    /* DESTROY BUTTON - Slightly smaller to not distract */
+    div[data-testid="stVerticalBlock"] > div:last-child .stButton > button p {
+        font-size: 25px !important;
+    }
+    div[data-testid="stVerticalBlock"] > div:last-child .stButton > button {
+        min-height: 60px !important;
+    }
+
     .result-box {
         background-color: #FEE2E9; 
         color: #B4A7D6;
@@ -60,7 +66,6 @@ st.markdown("""
         font-weight: bold;
     }
 
-    /* DECODED WHISPER STYLE */
     .whisper-text {
         color: #B4A7D6;
         font-family: "Courier New", Courier, monospace !important;
@@ -141,7 +146,7 @@ if kw and (kiss_btn or tell_btn):
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
-                    share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:85px; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase; border:none;">SHARE OPTIONS ✨</button>"""
+                    share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:80px; width:100%; cursor:pointer; font-size: 32px; text-transform: uppercase; border:none;">SHARE OPTIONS ✨</button>"""
                     components.html(share_html, height=100)
 
         if tell_btn:
