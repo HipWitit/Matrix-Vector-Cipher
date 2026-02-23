@@ -7,41 +7,42 @@ import streamlit.components.v1 as components
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
-# The specific purple from your buttons: #B4A7D6
-# The pink background from your boxes: #FEE2E9
-
 st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
     
-    /* REMOVE ALL LABELS (Key, Hint, Message) */
-    div[data-testid="stWidgetLabel"], label, .st-emotion-cache-1pxm84n {
+    /* HIDE ALL TEXT LABELS */
+    div[data-testid="stWidgetLabel"], label {
         display: none !important;
         height: 0px !important;
         margin: 0px !important;
         padding: 0px !important;
-        font-size: 0px !important;
     }
 
-    /* INPUT BOX PRINT CUSTOMIZATION */
-    /* Target the text you type AND the placeholder text */
+    /* INPUT BOX CUSTOMIZATION */
     .stTextInput > div > div > input, 
     .stTextArea > div > div > textarea,
     input::placeholder,
     textarea::placeholder {
         background-color: #FEE2E9 !important;
-        color: #B4A7D6 !important; /* MATCHES BUTTON PURPLE */
+        color: #B4A7D6 !important; /* BUTTON PURPLE FONT */
         border: 2px solid #B4A7D6 !important;
         font-family: "Courier New", Courier, monospace !important;
         font-size: 18px !important;
         font-weight: bold !important;
-        -webkit-text-fill-color: #B4A7D6 !important; /* Ensures color on mobile */
+        -webkit-text-fill-color: #B4A7D6 !important;
     }
 
-    /* Pulls boxes closer to your image labels */
-    .stTextInput, .stTextArea {
-        margin-top: -15px !important;
+    /* FIX FOR TOP BOX CUT-OFF */
+    /* Adds a little space above the first input so it doesn't hit the image */
+    .stTextInput {
+        margin-top: 10px !important; 
         margin-bottom: 10px !important;
+    }
+
+    /* Keeps the Message box tight to its image */
+    .stTextArea {
+        margin-top: 5px !important;
     }
 
     /* Standard Buttons */
@@ -57,7 +58,7 @@ st.markdown("""
 
     .result-box {
         background-color: #FEE2E9; 
-        color: #B4A7D6; /* MATCHES BUTTON PURPLE */
+        color: #B4A7D6;
         padding: 15px;
         border-radius: 10px;
         font-family: monospace;
@@ -168,4 +169,3 @@ if kw and (kiss_btn or tell_btn):
                 output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
-
