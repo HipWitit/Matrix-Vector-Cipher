@@ -46,14 +46,6 @@ st.markdown("""
         box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* DESTROY BUTTON */
-    div[data-testid="stVerticalBlock"] > div:last-child .stButton > button p {
-        font-size: 22px !important;
-    }
-    div[data-testid="stVerticalBlock"] > div:last-child .stButton > button {
-        min-height: 60px !important;
-    }
-
     .result-box {
         background-color: #FEE2E9; 
         color: #B4A7D6;
@@ -89,25 +81,13 @@ char_to_coord = {
 coord_to_char = {v: k for k, v in char_to_coord.items()}
 EMOJI_MAP = {'1': '🦄', '2': '🍼', '3': '🩷', '4': '🧸', '5': '🎀', '6': '🍓', '7': '🌈', '8': '🌸', '9': '💕', '0': '🫐'}
 
-# Rule: - followed by Even = 🍭, - followed by Odd = 🍬
-
-
-def apply_sweet_parity(text):
-    """Converts negative signs into 🍭 or 🍬 based on the digit parity."""
+def apply_sweet_parity(val_str):
+    """Turns minus into 🍭(even) or 🍬(odd) based on the first digit."""
     def replacer(match):
-        sign = match.group(1)
         digit = match.group(2)
-        if int(digit) % 2 == 0:
-            return '🍭' + digit
-        else:
-            return '🍬' + digit
-    return re.sub(r'(-)(\d)', replacer, text)
-
-def reverse_sweet_parity(text):
-    """Converts 🍭 and 🍬 back into negative signs."""
-    text = text.replace('🍭', '-')
-    text = text.replace('🍬', '-')
-    return text
+        candy = '🍭' if int(digit) % 2 == 0 else '🍬'
+        return candy + digit
+    return re.sub(r'(-)(\d)', replacer, val_str)
 
 def get_matrix_elements(key):
     seed = sum(ord(c) for c in key)
@@ -118,32 +98,17 @@ def modInverse(n, m=31):
         if (((n % m) * (x % m)) % m == 1): return x
     return None
 
-def clear_everything():
-    st.session_state.lips = ""
-    st.session_state.chem = ""
-    st.session_state.hint = ""
-
-# --- 3. UI LAYOUT ---
+# --- 3. UI ---
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", width="stretch")
-if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", width="stretch")
-
 kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY").upper().strip()
-hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)")
-
-if os.path.exists("Kiss Chemistry.png"): st.image("Kiss Chemistry.png", width="stretch")
+hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT")
 user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR MESSAGE")
 
-output_placeholder = st.empty()
-
 col1, col2 = st.columns(2)
-with col1:
-    kiss_btn = st.button("KISS", width="stretch")
-with col2:
-    tell_btn = st.button("TELL", width="stretch")
+kiss_btn = col1.button("KISS")
+tell_btn = col2.button("TELL")
 
-st.button("DESTROY CHEMISTRY", width="stretch", on_click=clear_everything)
-
-# --- 4. PROCESSING LOGIC ---
+# --- 4. LOGIC ---
 if kw and (kiss_btn or tell_btn):
     a, b, c, d = get_matrix_elements(kw)
     det_inv = modInverse((a * d - b * c) % 31)
@@ -156,45 +121,78 @@ if kw and (kiss_btn or tell_btn):
                     x, y = char_to_coord[char]
                     nx, ny = (a*x + b*y) % 31, (c*x + d*y) % 31
                     points.append((nx, ny))
+            
             if points:
-                moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
-                raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
+                # 1. Header (Index 0) -> Reverse
+                h_x = apply_sweet_parity(str(points[0][0]))
+                h_y = apply_sweet_parity(str(points[0][1]))
+                # Emoji map them first then reverse
+                h_x_e = "".join(EMOJI_MAP.get(c, c) for c in h_x)
+                h_y_e = "".join(EMOJI_MAP.get(c, c) for c in h_y)
+                header = f"{h_x_e[::-1]},{h_y_e[::-1]}"
                 
-                # Apply the Sweet Parity Rule to the raw string
-                parity_res = apply_sweet_parity(raw_res)
-                # Then apply standard emoji map
-                emoji_res = "".join(EMOJI_MAP.get(c, c) for c in parity_res)
+                # 2. Moves
+                moves_list = []
+                for i in range(len(points)-1):
+                    dx_val = points[i+1][0] - points[i][0]
+                    dy_val = points[i+1][1] - points[i][1]
+                    
+                    dx = "".join(EMOJI_MAP.get(c, c) for c in apply_sweet_parity(str(dx_val)))
+                    dy = "".join(EMOJI_MAP.get(c, c) for c in apply_sweet_parity(str(dy_val)))
+                    
+                    # Mirror Rule: Even positions (index 1, 3, 5...) are reversed
+                    # Note: 'i' starts at 0 for Move 1, so (i+1) % 2 == 0 checks for even moves
+                    if (i + 1) % 2 == 0:
+                        moves_list.append(f"({dx[::-1]},{dy[::-1]})")
+                    else:
+                        moves_list.append(f"({dx},{dy})")
                 
-                final_share_msg = f"{emoji_res}\\n\\nHint: {hint_text}" if hint_text else emoji_res
-                
-                with output_placeholder.container():
-                    st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    if hint_text: st.caption(f"Hint: {hint_text}")
-                    share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:80px; width:100%; cursor:pointer; font-size: 32px; text-transform: uppercase; border:none;">SHARE OPTIONS ✨</button>"""
-                    components.html(share_html, height=100)
+                emoji_res = f"{header} | MOVES: {' '.join(moves_list)}"
+                st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
+                share_msg = f"{emoji_res}\\n\\nHint: {hint_text}" if hint_text else emoji_res
+                share_html = f"""<button onclick="navigator.share({{title:'Secret',text:`{share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:80px; width:100%; cursor:pointer; font-size: 32px; border:none; margin-top:10px;">SHARE ✨</button>"""
+                components.html(share_html, height=100)
 
         if tell_btn:
             try:
-                # 1. Strip hint
                 clean_input = user_input.split("Hint:")[0].strip()
-                # 2. Reverse standard emojis
-                reverse_map = {v: k for k, v in EMOJI_MAP.items()}
-                standard_reverted = "".join(reverse_map.get(c, c) for c in clean_input)
-                # 3. Reverse the Sweet Parity (Candy/Lollipop -> Negative Sign)
-                clean_msg = reverse_sweet_parity(standard_reverted)
+                header_part, moves_part = clean_input.split("|")
                 
+                # Reverse the Emoji Map
+                rev_map = {v: k for k, v in EMOJI_MAP.items()}
+                def emoji_to_math(s):
+                    s = "".join(rev_map.get(c, c) for c in s)
+                    return int(s.replace('🍭', '-').replace('🍬', '-'))
+
+                # 1. Decode Header (Always Reversed)
+                hx_e, hy_e = header_part.strip().split(",")
+                curr_x = emoji_to_math(hx_e[::-1])
+                curr_y = emoji_to_math(hy_e[::-1])
+                
+                # Matrix Math
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
                 inv_c, inv_d = (-c * det_inv) % 31, (a * det_inv) % 31
-                header, moves_part = clean_msg.split("|")
-                h_nums = re.findall(r"(-?\d+)", header)
-                curr_x, curr_y = int(h_nums[0]), int(h_nums[1])
+                
                 ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                 decoded = [coord_to_char.get((ux, uy), "?")]
-                for dx, dy in re.findall(r"(-?\d+),(-?\d+)", moves_part):
-                    curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
+                
+                # 2. Decode Moves
+                moves = re.findall(r"\(([^)]+)\)", moves_part)
+                for i, m in enumerate(moves):
+                    dx_e, dy_e = m.split(",")
+                    # Mirror Rule: If even move, reverse back
+                    if (i + 1) % 2 == 0:
+                        dx = emoji_to_math(dx_e[::-1])
+                        dy = emoji_to_math(dy_e[::-1])
+                    else:
+                        dx = emoji_to_math(dx_e)
+                        dy = emoji_to_math(dy_e)
+                        
+                    curr_x += dx
+                    curr_y += dy
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
                 
-                output_placeholder.markdown(f'<div class="whisper-text">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="whisper-text">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
