@@ -7,31 +7,41 @@ import streamlit.components.v1 as components
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
+# The specific purple from your buttons: #B4A7D6
+# The pink background from your boxes: #FEE2E9
+
 st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
     
-    /* ULTRA-AGGRESSIVE LABEL REMOVAL */
-    /* This targets every possible label element to ensure 'Key', 'Hint', and 'Message' vanish */
+    /* REMOVE ALL LABELS (Key, Hint, Message) */
     div[data-testid="stWidgetLabel"], label, .st-emotion-cache-1pxm84n {
         display: none !important;
-        visibility: hidden !important;
         height: 0px !important;
         margin: 0px !important;
         padding: 0px !important;
         font-size: 0px !important;
-        line-height: 0 !important;
     }
 
-    /* Removes extra padding that Streamlit adds where the labels used to be */
-    .stVerticalBlock { gap: 0.5rem !important; }
-
-    /* Input Boxes */
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
+    /* INPUT BOX PRINT CUSTOMIZATION */
+    /* Target the text you type AND the placeholder text */
+    .stTextInput > div > div > input, 
+    .stTextArea > div > div > textarea,
+    input::placeholder,
+    textarea::placeholder {
         background-color: #FEE2E9 !important;
-        color: #5B618A !important; 
+        color: #B4A7D6 !important; /* MATCHES BUTTON PURPLE */
         border: 2px solid #B4A7D6 !important;
-        margin-top: -10px !important; /* Pulls box up closer to your image */
+        font-family: "Courier New", Courier, monospace !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        -webkit-text-fill-color: #B4A7D6 !important; /* Ensures color on mobile */
+    }
+
+    /* Pulls boxes closer to your image labels */
+    .stTextInput, .stTextArea {
+        margin-top: -15px !important;
+        margin-bottom: 10px !important;
     }
 
     /* Standard Buttons */
@@ -47,7 +57,7 @@ st.markdown("""
 
     .result-box {
         background-color: #FEE2E9; 
-        color: #5B618A;
+        color: #B4A7D6; /* MATCHES BUTTON PURPLE */
         padding: 15px;
         border-radius: 10px;
         font-family: monospace;
@@ -88,7 +98,6 @@ def clear_everything():
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
 
-# Using label_visibility="collapsed" as a backup to the CSS
 kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY", label_visibility="collapsed").upper().strip()
 hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)", label_visibility="collapsed")
 
@@ -156,6 +165,7 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Cypher Whispers: {''.join(decoded)}</span>", unsafe_allow_html=True)
+                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
+
