@@ -36,22 +36,27 @@ st.markdown("""
     .stTextInput { margin-top: 15px !important; margin-bottom: 10px !important; }
     .stTextArea { margin-top: 5px !important; }
 
-    /* --- 2X BIGGER BUTTON FONT (FORCED) --- */
-    /* This targets the actual text container inside the button */
+    /* --- FLEXIBLE BIG BUTTONS --- */
     div.stButton > button p {
         font-size: 38px !important; 
         font-weight: bold !important;
-        font-family: sans-serif !important;
+        line-height: 1.1 !important; /* Helps text stack nicely if it wraps */
+        margin: 0 !important;
+        padding: 10px 0 !important;
     }
 
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         border-radius: 20px !important;
-        height: 75px !important; /* Kept button size the same */
+        min-height: 75px !important; /* Minimum size */
+        height: auto !important;     /* ALLOWS GROWING FOR DESTROY BUTTON */
         border: none !important;
         width: 100% !important;
         text-transform: uppercase;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     .result-box {
@@ -65,7 +70,6 @@ st.markdown("""
         word-wrap: break-word;
     }
 
-    /* Styled Decoded Output */
     .whisper-text {
         color: #B4A7D6;
         font-family: "Courier New", Courier, monospace !important;
@@ -148,12 +152,11 @@ if kw and (kiss_btn or tell_btn):
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
                     
-                    # 2X BIGGER SHARE BUTTON TEXT
                     share_html = f"""
                         <button onclick="if(navigator.share){{navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})}}else{{alert('Manual copy required');}}" 
-                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; height:75px; border:none; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase;">SHARE OPTIONS ✨</button>
+                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:75px; height:auto; border:none; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase; padding: 10px;">SHARE OPTIONS ✨</button>
                     """
-                    components.html(share_html, height=90)
+                    components.html(share_html, height=120) # Increased height to allow for font
 
         if tell_btn:
             try:
