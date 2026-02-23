@@ -10,7 +10,14 @@ st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
-    .stWidgetLabel p { display: none !important; }
+    
+    /* STRONGER LABEL HIDING: This removes the 'Key' and 'Message' text entirely */
+    div[data-testid="stWidgetLabel"] {
+        display: none !important;
+        height: 0px !important;
+        margin-bottom: 0px !important;
+        padding-bottom: 0px !important;
+    }
 
     /* Input Boxes */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
@@ -73,6 +80,7 @@ def clear_everything():
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
 
+# Placeholder labels kept for accessibility but hidden by CSS
 kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY").upper().strip()
 hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)")
 
@@ -107,14 +115,12 @@ if kw and (kiss_btn or tell_btn):
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
                 
-                # Full message for the share menu
                 final_share_msg = f"{emoji_res}\\n\\nHint: {hint_text}" if hint_text else emoji_res
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
                     
-                    # SINGLE MASTER SHARE BUTTON
                     share_html = f"""
                         <script>
                         function shareMe() {{
@@ -129,7 +135,6 @@ if kw and (kiss_btn or tell_btn):
 
         if tell_btn:
             try:
-                # Clean out hint/meta text if present
                 clean_input = user_input.split("Hint:")[0].strip()
                 clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in clean_input)
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
