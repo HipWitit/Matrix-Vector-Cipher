@@ -6,7 +6,9 @@ import streamlit.components.v1 as components
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
+# IMPORTING 'COOKIE' FONT FROM GOOGLE FONTS
 st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
     <style>
     .stApp { background-color: #E6E1F2 !important; }
     
@@ -36,24 +38,26 @@ st.markdown("""
     .stTextInput { margin-top: 15px !important; margin-bottom: 10px !important; }
     .stTextArea { margin-top: 5px !important; }
 
-    /* --- FLEXIBLE BIG BUTTONS --- */
+    /* --- COOKIE FONT BUTTONS --- */
     div.stButton > button p {
-        font-size: 38px !important; 
-        font-weight: bold !important;
-        line-height: 1.1 !important; /* Helps text stack nicely if it wraps */
+        /* APPLYING THE COOKIE FONT */
+        font-family: 'Cookie', cursive !important;
+        font-size: 48px !important; /* Script fonts often look smaller, so I bumped this slightly */
+        font-weight: normal !important; /* Cookie looks better at its natural weight */
+        line-height: 1.0 !important;
         margin: 0 !important;
-        padding: 10px 0 !important;
+        padding: 5px 0 !important;
     }
 
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         border-radius: 20px !important;
-        min-height: 75px !important; /* Minimum size */
-        height: auto !important;     /* ALLOWS GROWING FOR DESTROY BUTTON */
+        min-height: 80px !important; 
+        height: auto !important;     
         border: none !important;
         width: 100% !important;
-        text-transform: uppercase;
+        /* Removed uppercase because cursive looks better in normal casing */
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -122,11 +126,11 @@ output_placeholder = st.empty()
 
 col_main1, col_main2 = st.columns(2)
 with col_main1:
-    kiss_btn = st.button("KISS", use_container_width=True)
+    kiss_btn = st.button("Kiss", use_container_width=True)
 with col_main2:
-    tell_btn = st.button("TELL", use_container_width=True)
+    tell_btn = st.button("Tell", use_container_width=True)
 
-st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
+st.button("Destroy Chemistry", use_container_width=True, on_click=clear_everything)
 
 # --- 4. PROCESSING LOGIC ---
 if kw and (kiss_btn or tell_btn):
@@ -153,10 +157,11 @@ if kw and (kiss_btn or tell_btn):
                     if hint_text: st.caption(f"Hint: {hint_text}")
                     
                     share_html = f"""
+                        <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
                         <button onclick="if(navigator.share){{navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})}}else{{alert('Manual copy required');}}" 
-                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:75px; height:auto; border:none; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase; padding: 10px;">SHARE OPTIONS ✨</button>
+                        style="background-color:#B4A7D6; color:#FFD4E5; border-radius:20px; min-height:80px; height:auto; border:none; width:100%; cursor:pointer; font-family: 'Cookie', cursive; font-size: 48px; padding: 10px;">Share Options ✨</button>
                     """
-                    components.html(share_html, height=120) # Increased height to allow for font
+                    components.html(share_html, height=120)
 
         if tell_btn:
             try:
