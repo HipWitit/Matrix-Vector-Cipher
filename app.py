@@ -23,18 +23,41 @@ st.markdown("""
         font-weight: bold !important;
     }
 
+    /* --- THE ULTIMATE CSS HACK FOR MASSIVE BUTTON FONT --- */
+    /* This targets the actual text paragraph inside the Streamlit button */
+    div.stButton > button p {
+        font-size: 100px !important; 
+        font-weight: 900 !important;
+        line-height: 1.1 !important;
+        margin: 0 !important;
+        padding: 10px 0 !important;
+    }
+
+    div.stButton > button {
+        background-color: #B4A7D6 !important; 
+        color: #FFD4E5 !important;
+        border-radius: 20px !important;
+        min-height: 150px !important; /* Make button tall enough for the text */
+        height: auto !important;     
+        border: none !important;
+        width: 100% !important;
+        text-transform: uppercase;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
     /* ENCODED BOX */
     .result-box {
         background-color: #FEE2E9; 
         color: #B4A7D6;
-        padding: 20px;
+        padding: 15px;
         border-radius: 10px;
         font-family: "Courier New", Courier, monospace !important;
-        border: 3px solid #B4A7D6;
+        border: 2px solid #B4A7D6;
         word-wrap: break-word;
-        margin-top: 15px;
+        margin-top: 10px;
         font-weight: bold;
-        font-size: 20px;
     }
 
     /* DECODED WHISPER STYLE */
@@ -42,20 +65,10 @@ st.markdown("""
         color: #B4A7D6;
         font-family: "Courier New", Courier, monospace !important;
         font-weight: bold;
-        font-size: 32px;
-        margin-top: 20px;
-        border-top: 3px dashed #B4A7D6;
-        padding-top: 15px;
-    }
-    
-    /* STYLING FOR THE GIGANTIC DESTROY BUTTON */
-    .stButton > button {
-        background-color: #B4A7D6 !important;
-        color: #FFD4E5 !important;
-        font-size: 50px !important;
-        font-weight: 900 !important;
-        min-height: 100px !important;
-        border-radius: 20px !important;
+        font-size: 28px;
+        margin-top: 15px;
+        border-top: 2px dashed #B4A7D6;
+        padding-top: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -81,6 +94,11 @@ def modInverse(n, m=31):
         if (((n % m) * (x % m)) % m == 1): return x
     return None
 
+def clear_everything():
+    st.session_state.lips = ""
+    st.session_state.chem = ""
+    st.session_state.hint = ""
+
 # --- 3. UI LAYOUT ---
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", width="stretch")
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", width="stretch")
@@ -91,37 +109,23 @@ hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)")
 if os.path.exists("Kiss Chemistry.png"): st.image("Kiss Chemistry.png", width="stretch")
 user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR MESSAGE")
 
-# Custom Button Logic via Query Params
-params = st.query_params
-kiss_clicked = params.get("action") == "kiss"
-tell_clicked = params.get("action") == "tell"
-
-# Injecting the Custom HTML Buttons for massive font control
-button_html = f"""
-    <div style="display: flex; gap: 10px;">
-        <a href="/?action=kiss" target="_self" style="flex: 1; text-decoration: none;">
-            <button style="width: 100%; background-color: #B4A7D6; color: #FFD4E5; border: none; border-radius: 20px; height: 120px; font-size: 70px; font-weight: 900; cursor: pointer; font-family: sans-serif;">KISS</button>
-        </a>
-        <a href="/?action=tell" target="_self" style="flex: 1; text-decoration: none;">
-            <button style="width: 100%; background-color: #B4A7D6; color: #FFD4E5; border: none; border-radius: 20px; height: 120px; font-size: 70px; font-weight: 900; cursor: pointer; font-family: sans-serif;">TELL</button>
-        </a>
-    </div>
-"""
-components.html(button_html, height=140)
-
-if st.button("DESTROY CHEMISTRY", width="stretch"):
-    st.query_params.clear()
-    st.rerun()
-
 output_placeholder = st.empty()
 
+col1, col2 = st.columns(2)
+with col1:
+    kiss_btn = st.button("KISS", width="stretch")
+with col2:
+    tell_btn = st.button("TELL", width="stretch")
+
+st.button("DESTROY CHEMISTRY", width="stretch", on_click=clear_everything)
+
 # --- 4. PROCESSING LOGIC ---
-if kw and (kiss_clicked or tell_clicked):
+if kw and (kiss_btn or tell_btn):
     a, b, c, d = get_matrix_elements(kw)
     det_inv = modInverse((a * d - b * c) % 31)
     
     if det_inv:
-        if kiss_clicked:
+        if kiss_btn:
             points = []
             for char in user_input.upper():
                 if char in char_to_coord:
@@ -136,10 +140,11 @@ if kw and (kiss_clicked or tell_clicked):
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:900; border-radius:25px; min-height:80px; width:100%; cursor:pointer; font-size: 30px; text-transform: uppercase; border:none;">SHARE OPTIONS ✨</button>"""
+                    if hint_text: st.caption(f"Hint: {hint_text}")
+                    share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:85px; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase; border:none;">SHARE OPTIONS ✨</button>"""
                     components.html(share_html, height=100)
 
-        if tell_clicked:
+        if tell_btn:
             try:
                 clean_input = user_input.split("Hint:")[0].strip()
                 clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in clean_input)
