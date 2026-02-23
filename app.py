@@ -9,12 +9,20 @@ st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
-    div[data-testid="stWidgetLabel"], label { display: none !important; }
+    
+    /* HIDE ALL TEXT LABELS */
+    div[data-testid="stWidgetLabel"], label {
+        display: none !important;
+        height: 0px !important;
+        margin: 0px !important;
+        padding: 0px !important;
+    }
 
     /* INPUT BOX CUSTOMIZATION */
     .stTextInput > div > div > input, 
     .stTextArea > div > div > textarea,
-    input::placeholder, textarea::placeholder {
+    input::placeholder,
+    textarea::placeholder {
         background-color: #FEE2E9 !important;
         color: #B4A7D6 !important; 
         border: 2px solid #B4A7D6 !important;
@@ -23,18 +31,21 @@ st.markdown("""
         font-weight: bold !important;
     }
 
-    /* BIGGER BUTTON STYLING */
+    /* --- BIG BOLD BUTTONS --- */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         border-radius: 20px !important;
-        min-height: 85px !important;
-        font-size: 48px !important; /* Bolder, bigger font */
+        min-height: 90px !important; 
+        font-size: 48px !important; /* Large, easy-to-read font */
         font-weight: bold !important;
         text-transform: uppercase;
         line-height: 1.1 !important;
+        border: none !important;
+        width: 100% !important;
     }
 
+    /* ENCODED BOX */
     .result-box {
         background-color: #FEE2E9; 
         color: #B4A7D6;
@@ -47,12 +58,12 @@ st.markdown("""
         font-weight: bold;
     }
 
-    /* REVERTED DECODED STYLE */
+    /* DECODED WHISPER STYLE (REVERTED) */
     .whisper-text {
         color: #B4A7D6;
         font-family: "Courier New", Courier, monospace !important;
         font-weight: bold;
-        font-size: 26px;
+        font-size: 28px;
         margin-top: 15px;
         border-top: 2px dashed #B4A7D6;
         padding-top: 10px;
@@ -129,7 +140,7 @@ if kw and (kiss_btn or tell_btn):
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
                     share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:85px; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase; border:none;">SHARE OPTIONS ✨</button>"""
-                    components.html(share_html, height=110)
+                    components.html(share_html, height=100)
 
         if tell_btn:
             try:
@@ -147,7 +158,7 @@ if kw and (kiss_btn or tell_btn):
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
                 
-                # Reverted back to whisper-text style
+                # REVERTED: Using whisper-text class for the decoded message
                 output_placeholder.markdown(f'<div class="whisper-text">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
