@@ -36,20 +36,24 @@ st.markdown("""
     .stTextInput { margin-top: 15px !important; margin-bottom: 10px !important; }
     .stTextArea { margin-top: 5px !important; }
 
-    /* --- LARGE BUTTON FONT CUSTOMIZATION --- */
+    /* --- 2X BIGGER BUTTON FONT --- */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 20px !important;
-        height: 80px !important; /* Taller buttons for bigger font */
+        
+        /* Fixed height to keep button size the same */
+        height: 70px !important; 
         border: none !important;
         width: 100% !important;
         
-        /* THE BIG PRINT: Set to 32px */
-        font-size: 32px !important; 
+        /* 2x Font Size */
+        font-size: 36px !important; 
         text-transform: uppercase;
-        letter-spacing: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .result-box {
@@ -146,12 +150,12 @@ if kw and (kiss_btn or tell_btn):
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
                     
-                    # LARGE SHARE BUTTON
+                    # LARGE SHARE BUTTON MATCHING STYLE
                     share_html = f"""
                         <button onclick="if(navigator.share){{navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})}}else{{alert('Manual copy required');}}" 
-                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:15px; height:80px; border:none; width:100%; cursor:pointer; font-size: 32px; text-transform: uppercase;">SHARE OPTIONS ✨</button>
+                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; height:70px; border:none; width:100%; cursor:pointer; font-size: 36px; text-transform: uppercase;">SHARE OPTIONS ✨</button>
                     """
-                    components.html(share_html, height=90)
+                    components.html(share_html, height=85)
 
         if tell_btn:
             try:
@@ -172,4 +176,3 @@ if kw and (kiss_btn or tell_btn):
                 output_placeholder.markdown(f'<div class="whisper-text">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
-
