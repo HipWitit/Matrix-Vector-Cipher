@@ -34,7 +34,7 @@ st.markdown("""
         text-decoration: none !important;
     }
 
-    /* Copy Button Styling */
+    /* Copy Button Styling - Purple theme matching Kiss/Tell */
     div[data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important;
         color: #FFD4E5 !important;
@@ -124,6 +124,7 @@ if kw and (kiss_btn or tell_btn):
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
                 
+                # REVISED PACKAGING WITH HINT
                 final_share_msg = f"{emoji_res}\n\nHint: {hint_text}" if hint_text else emoji_res
                 encoded_msg = urllib.parse.quote(final_share_msg)
                 
@@ -132,18 +133,20 @@ if kw and (kiss_btn or tell_btn):
                     if hint_text:
                         st.caption(f"Hint: {hint_text}")
                     
+                    # 1. PRIMARY ACTION: COPY
                     st_copy_to_clipboard(final_share_msg, before_copy_label="COPY CHEMISTRY & HINT", after_copy_label="COPIED! 🩷")
                     
                     col1, col2 = st.columns(2)
                     with col1:
-                        # Improved SMS link for updated phones
+                        # 2. RELIABLE FALLBACK: SMS
                         st.link_button("SEND TEXT 📱", f"sms:?body={encoded_msg}", use_container_width=True)
                     with col2:
-                        # SAFE LAUNCH: Just opens the app without crashing
-                        st.link_button("OPEN MESSENGER 💬", "fb-messenger://share", use_container_width=True)
+                        # 3. MANUAL SHARE INSTRUCTIONS (Replaces broken Messenger link)
+                        st.button("SHARE OPTIONS ✨", help="Tap 'Copy' then use your phone's browser menu to paste into Messenger or other apps.", use_container_width=True)
 
         if tell_btn:
             try:
+                # Strip hint text if pasted back in
                 clean_input = user_input.split("Hint:")[0].strip()
                 clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in clean_input)
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
