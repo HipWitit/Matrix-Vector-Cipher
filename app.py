@@ -4,6 +4,7 @@ import os
 import streamlit.components.v1 as components
 
 # --- 1. CONFIG & STYLING ---
+# This must be the very first Streamlit command
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
 st.markdown("""
@@ -109,7 +110,7 @@ def clear_everything():
     st.session_state.hint = ""
 
 # --- 3. UI LAYOUT ---
-# Updated use_container_width to use_column_width to resolve log warnings
+# Swapping use_container_width for use_column_width to silence warnings
 if os.path.exists("CYPHER.png"): 
     st.image("CYPHER.png", use_column_width=True)
 
@@ -128,7 +129,6 @@ output_placeholder = st.empty()
 
 col_main1, col_main2 = st.columns(2)
 with col_main1:
-    # Buttons still use use_container_width as it remains the standard for this widget
     kiss_btn = st.button("KISS", use_container_width=True)
 with col_main2:
     tell_btn = st.button("TELL", use_container_width=True)
