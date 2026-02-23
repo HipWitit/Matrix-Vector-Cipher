@@ -11,19 +11,27 @@ st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
     
-    /* STRONGER LABEL HIDING: This removes the 'Key' and 'Message' text entirely */
-    div[data-testid="stWidgetLabel"] {
+    /* ULTRA-AGGRESSIVE LABEL REMOVAL */
+    /* This targets every possible label element to ensure 'Key', 'Hint', and 'Message' vanish */
+    div[data-testid="stWidgetLabel"], label, .st-emotion-cache-1pxm84n {
         display: none !important;
+        visibility: hidden !important;
         height: 0px !important;
-        margin-bottom: 0px !important;
-        padding-bottom: 0px !important;
+        margin: 0px !important;
+        padding: 0px !important;
+        font-size: 0px !important;
+        line-height: 0 !important;
     }
+
+    /* Removes extra padding that Streamlit adds where the labels used to be */
+    .stVerticalBlock { gap: 0.5rem !important; }
 
     /* Input Boxes */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #FEE2E9 !important;
         color: #5B618A !important; 
         border: 2px solid #B4A7D6 !important;
+        margin-top: -10px !important; /* Pulls box up closer to your image */
     }
 
     /* Standard Buttons */
@@ -80,12 +88,12 @@ def clear_everything():
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
 
-# Placeholder labels kept for accessibility but hidden by CSS
-kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY").upper().strip()
-hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)")
+# Using label_visibility="collapsed" as a backup to the CSS
+kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY", label_visibility="collapsed").upper().strip()
+hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)", label_visibility="collapsed")
 
 if os.path.exists("Kiss Chemistry.png"): st.image("Kiss Chemistry.png", use_container_width=True)
-user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR MESSAGE")
+user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR MESSAGE", label_visibility="collapsed")
 
 output_placeholder = st.empty()
 
