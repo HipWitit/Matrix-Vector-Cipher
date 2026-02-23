@@ -124,7 +124,6 @@ if kw and (kiss_btn or tell_btn):
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
                 
-                # REVISED PACKAGING
                 final_share_msg = f"{emoji_res}\n\nHint: {hint_text}" if hint_text else emoji_res
                 encoded_msg = urllib.parse.quote(final_share_msg)
                 
@@ -137,14 +136,14 @@ if kw and (kiss_btn or tell_btn):
                     
                     col1, col2 = st.columns(2)
                     with col1:
-                        # Stripped the '&' for better compatibility with updated phones
+                        # Improved SMS link for updated phones
                         st.link_button("SEND TEXT 📱", f"sms:?body={encoded_msg}", use_container_width=True)
                     with col2:
-                        st.link_button("MESSENGER 💬", "fb-messenger://share", use_container_width=True)
+                        # SAFE LAUNCH: Just opens the app without crashing
+                        st.link_button("OPEN MESSENGER 💬", "fb-messenger://share", use_container_width=True)
 
         if tell_btn:
             try:
-                # Strip hint text if present
                 clean_input = user_input.split("Hint:")[0].strip()
                 clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in clean_input)
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
