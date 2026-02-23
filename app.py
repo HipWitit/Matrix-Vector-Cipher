@@ -3,7 +3,6 @@ import re
 import os
 import urllib.parse
 import streamlit.components.v1 as components
-from st_copy_to_clipboard import st_copy_to_clipboard
 
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
@@ -21,27 +20,12 @@ st.markdown("""
     }
 
     /* Standard Buttons */
-    div.stButton > button, div.stLinkButton > a {
+    div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
         height: 50px !important;
-        border: none !important;
-        width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-decoration: none !important;
-    }
-
-    /* Copy Button Styling */
-    div[data-testid="stCustomComponentV1"] button {
-        background-color: #B4A7D6 !important;
-        color: #FFD4E5 !important;
-        font-weight: bold !important;
-        border-radius: 15px !important;
-        height: 45px !important; 
         border: none !important;
         width: 100% !important;
     }
@@ -80,6 +64,11 @@ def modInverse(n, m=31):
         if (((n % m) * (x % m)) % m == 1): return x
     return None
 
+def clear_everything():
+    st.session_state.lips = ""
+    st.session_state.chem = ""
+    st.session_state.hint = ""
+
 # --- 3. UI LAYOUT ---
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
@@ -92,8 +81,13 @@ user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR M
 
 output_placeholder = st.empty()
 
-kiss_btn = st.button("KISS", use_container_width=True)
-tell_btn = st.button("TELL", use_container_width=True)
+col_main1, col_main2 = st.columns(2)
+with col_main1:
+    kiss_btn = st.button("KISS", use_container_width=True)
+with col_main2:
+    tell_btn = st.button("TELL", use_container_width=True)
+
+st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
 
 # --- 4. PROCESSING LOGIC ---
 if kw and (kiss_btn or tell_btn):
@@ -113,34 +107,29 @@ if kw and (kiss_btn or tell_btn):
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
                 
+                # Full message for the share menu
                 final_share_msg = f"{emoji_res}\\n\\nHint: {hint_text}" if hint_text else emoji_res
-                encoded_msg = urllib.parse.quote(final_share_msg.replace("\\n", "\n"))
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
                     
-                    st_copy_to_clipboard(final_share_msg.replace("\\n", "\n"), "COPY CHEMISTRY & HINT", "COPIED! 🩷")
-                    
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.link_button("SEND TEXT 📱", f"sms:?body={encoded_msg}", use_container_width=True)
-                    with col2:
-                        # NATIVE SHARE INJECTION
-                        share_html = f"""
-                            <script>
-                            function shareMe() {{
-                                if (navigator.share) {{
-                                    navigator.share({{ title: 'Secret Language', text: `{final_share_msg}` }});
-                                }} else {{ alert('Share not supported here. Use Copy & Paste!'); }}
-                            }}
-                            </script>
-                            <button onclick="shareMe()" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:15px; height:50px; border:none; width:100%; cursor:pointer;">SHARE OPTIONS ✨</button>
-                        """
-                        components.html(share_html, height=60)
+                    # SINGLE MASTER SHARE BUTTON
+                    share_html = f"""
+                        <script>
+                        function shareMe() {{
+                            if (navigator.share) {{
+                                navigator.share({{ title: 'Secret Language', text: `{final_share_msg}` }});
+                            }} else {{ alert('Share not supported here. Copy manual!'); }}
+                        }}
+                        </script>
+                        <button onclick="shareMe()" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:15px; height:50px; border:none; width:100%; cursor:pointer;">SHARE OPTIONS ✨</button>
+                    """
+                    components.html(share_html, height=60)
 
         if tell_btn:
             try:
+                # Clean out hint/meta text if present
                 clean_input = user_input.split("Hint:")[0].strip()
                 clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in clean_input)
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
