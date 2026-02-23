@@ -6,7 +6,7 @@ import streamlit.components.v1 as components
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
-# This block pulls the 'Cookie' font and restores your pink/purple theme
+# This block pulls the 'Cookie' font and restores the pink/purple theme
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
     <style>
@@ -105,6 +105,7 @@ def clear_everything():
     st.session_state.hint = ""
 
 # --- 3. UI LAYOUT ---
+# Header images
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
 
@@ -174,4 +175,3 @@ if kw and (kiss_btn or tell_btn):
                 output_placeholder.markdown(f'<div class="whisper-text">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
-
