@@ -6,21 +6,19 @@ import streamlit.components.v1 as components
 # --- 1. CONFIG & STYLING ---
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
-# This block imports the 'Cookie' font and applies it to your buttons
+# This block pulls the 'Cookie' font and restores your pink/purple theme
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
     <style>
     .stApp { background-color: #E6E1F2 !important; }
     
-    /* HIDE ALL TEXT LABELS */
+    /* HIDE LABELS */
     div[data-testid="stWidgetLabel"], label {
         display: none !important;
         height: 0px !important;
-        margin: 0px !important;
-        padding: 0px !important;
     }
 
-    /* INPUT BOX CUSTOMIZATION */
+    /* INPUT BOXES */
     .stTextInput > div > div > input, 
     .stTextArea > div > div > textarea,
     input::placeholder,
@@ -34,10 +32,10 @@ st.markdown("""
         -webkit-text-fill-color: #B4A7D6 !important;
     }
 
-    /* --- COOKIE FONT BUTTONS --- */
+    /* --- COOKIE FONT ON BUTTONS --- */
     div.stButton > button p {
         font-family: 'Cookie', cursive !important;
-        font-size: 48px !important; 
+        font-size: 52px !important; 
         font-weight: normal !important; 
         line-height: 1.0 !important;
         margin: 0 !important;
@@ -48,7 +46,7 @@ st.markdown("""
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         border-radius: 20px !important;
-        min-height: 85px !important; /* Slightly taller for the script font */
+        min-height: 90px !important; 
         height: auto !important;     
         border: none !important;
         width: 100% !important;
@@ -107,7 +105,6 @@ def clear_everything():
     st.session_state.hint = ""
 
 # --- 3. UI LAYOUT ---
-# (Assuming your images are in the same folder as the script)
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
 
@@ -154,9 +151,9 @@ if kw and (kiss_btn or tell_btn):
                     share_html = f"""
                         <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
                         <button onclick="if(navigator.share){{navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})}}else{{alert('Manual copy required');}}" 
-                        style="background-color:#B4A7D6; color:#FFD4E5; border-radius:20px; min-height:85px; height:auto; border:none; width:100%; cursor:pointer; font-family: 'Cookie', cursive; font-size: 48px; padding: 10px;">Share Options ✨</button>
+                        style="background-color:#B4A7D6; color:#FFD4E5; border-radius:20px; min-height:90px; height:auto; border:none; width:100%; cursor:pointer; font-family: 'Cookie', cursive; font-size: 52px; padding: 10px;">Share Options ✨</button>
                     """
-                    components.html(share_html, height=130)
+                    components.html(share_html, height=140)
 
         if tell_btn:
             try:
