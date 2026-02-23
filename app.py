@@ -156,6 +156,6 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Decoded: {''.join(decoded)}</span>", unsafe_allow_html=True)
+                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Cypher Whispers: {''.join(decoded)}</span>", unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
