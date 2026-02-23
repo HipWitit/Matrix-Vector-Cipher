@@ -40,7 +40,7 @@ st.markdown("""
     div.stButton > button p {
         font-size: 38px !important; 
         font-weight: bold !important;
-        line-height: 1.1 !important; /* Helps text stack nicely if it wraps */
+        line-height: 1.1 !important; 
         margin: 0 !important;
         padding: 10px 0 !important;
     }
@@ -49,8 +49,8 @@ st.markdown("""
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         border-radius: 20px !important;
-        min-height: 75px !important; /* Minimum size */
-        height: auto !important;     /* ALLOWS GROWING FOR DESTROY BUTTON */
+        min-height: 75px !important; 
+        height: auto !important;     
         border: none !important;
         width: 100% !important;
         text-transform: uppercase;
@@ -109,13 +109,19 @@ def clear_everything():
     st.session_state.hint = ""
 
 # --- 3. UI LAYOUT ---
-if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
-if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
+# Changed use_container_width=True to use_column_width=True to fix deprecation warnings
+if os.path.exists("CYPHER.png"): 
+    st.image("CYPHER.png", use_column_width=True)
+
+if os.path.exists("Lock Lips.png"): 
+    st.image("Lock Lips.png", use_column_width=True)
 
 kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY", label_visibility="collapsed").upper().strip()
 hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)", label_visibility="collapsed")
 
-if os.path.exists("Kiss Chemistry.png"): st.image("Kiss Chemistry.png", use_container_width=True)
+if os.path.exists("Kiss Chemistry.png"): 
+    st.image("Kiss Chemistry.png", use_column_width=True)
+
 user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR MESSAGE", label_visibility="collapsed")
 
 output_placeholder = st.empty()
@@ -156,7 +162,7 @@ if kw and (kiss_btn or tell_btn):
                         <button onclick="if(navigator.share){{navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})}}else{{alert('Manual copy required');}}" 
                         style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:75px; height:auto; border:none; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase; padding: 10px;">SHARE OPTIONS ✨</button>
                     """
-                    components.html(share_html, height=120) # Increased height to allow for font
+                    components.html(share_html, height=120) 
 
         if tell_btn:
             try:
