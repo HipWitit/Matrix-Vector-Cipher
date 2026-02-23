@@ -9,20 +9,12 @@ st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
-    
-    /* HIDE ALL TEXT LABELS */
-    div[data-testid="stWidgetLabel"], label {
-        display: none !important;
-        height: 0px !important;
-        margin: 0px !important;
-        padding: 0px !important;
-    }
+    div[data-testid="stWidgetLabel"], label { display: none !important; }
 
     /* INPUT BOX CUSTOMIZATION */
     .stTextInput > div > div > input, 
     .stTextArea > div > div > textarea,
-    input::placeholder,
-    textarea::placeholder {
+    input::placeholder, textarea::placeholder {
         background-color: #FEE2E9 !important;
         color: #B4A7D6 !important; 
         border: 2px solid #B4A7D6 !important;
@@ -31,18 +23,19 @@ st.markdown("""
         font-weight: bold !important;
     }
 
-    /* --- BIG BOLD BUTTONS --- */
+    /* MASSIVE BOLD BUTTONS */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         border-radius: 20px !important;
-        min-height: 90px !important; 
-        font-size: 48px !important; /* Large, easy-to-read font */
-        font-weight: bold !important;
+        min-height: 100px !important; 
+        font-size: 64px !important; /* Significantly larger font */
+        font-weight: 900 !important;
         text-transform: uppercase;
-        line-height: 1.1 !important;
+        line-height: 1.2 !important;
         border: none !important;
         width: 100% !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1); /* Subtle depth */
     }
 
     /* ENCODED BOX */
@@ -58,7 +51,7 @@ st.markdown("""
         font-weight: bold;
     }
 
-    /* DECODED WHISPER STYLE (REVERTED) */
+    /* DECODED WHISPER STYLE */
     .whisper-text {
         color: #B4A7D6;
         font-family: "Courier New", Courier, monospace !important;
@@ -158,7 +151,6 @@ if kw and (kiss_btn or tell_btn):
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
                 
-                # REVERTED: Using whisper-text class for the decoded message
                 output_placeholder.markdown(f'<div class="whisper-text">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
