@@ -23,9 +23,9 @@ st.markdown("""
         font-weight: bold !important;
     }
 
-    /* THE "GOLDILOCKS" BUTTONS (Just Right) */
+    /* THE "GOLDILOCKS" BUTTONS */
     div.stButton > button p {
-        font-size: 45px !important; /* Bold but readable */
+        font-size: 55px !important;
         font-weight: 800 !important;
         line-height: 1.1 !important;
         margin: 0 !important;
@@ -35,7 +35,7 @@ st.markdown("""
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         border-radius: 15px !important;
-        min-height: 90px !important; 
+        min-height: 110px !important; 
         height: auto !important;     
         border: none !important;
         width: 100% !important;
@@ -46,9 +46,9 @@ st.markdown("""
         box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* DESTROY BUTTON - Slightly smaller to not distract */
+    /* DESTROY BUTTON */
     div[data-testid="stVerticalBlock"] > div:last-child .stButton > button p {
-        font-size: 25px !important;
+        font-size: 22px !important;
     }
     div[data-testid="stVerticalBlock"] > div:last-child .stButton > button {
         min-height: 60px !important;
@@ -78,7 +78,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. MATH ENGINE ---
+# --- 2. MATH & EMOJI ENGINE ---
 char_to_coord = {
     'Q': (2, 25), 'W': (5, 25), 'E': (8, 25), 'R': (11, 25), 'T': (14, 25), 'Y': (17, 25), 'U': (20, 25), 'I': (23, 25), 'O': (26, 25), 'P': (29, 25),
     'A': (3, 20), 'S': (6, 20), 'D': (9, 20), 'F': (12, 20), 'G': (15, 20), 'H': (18, 20), 'J': (21, 20), 'K': (24, 20), 'L': (27, 20),
@@ -87,8 +87,27 @@ char_to_coord = {
     '!': (5, 5),  ',': (10, 5), '.': (15, 5), ' ': (20, 5), '?': (25, 5)
 }
 coord_to_char = {v: k for k, v in char_to_coord.items()}
-EMOJI_MAP = {'1': '🦄', '2': '🍼', '3': '🩷', '4': '🧸', '5': '🎀', '6': '🍓', '7': '🌈', '8': '🌸', '9': '💕', '0': '🫐', '-': '🍭'}
-REVERSE_EMOJI_MAP = {v: k for k, v in EMOJI_MAP.items()}
+EMOJI_MAP = {'1': '🦄', '2': '🍼', '3': '🩷', '4': '🧸', '5': '🎀', '6': '🍓', '7': '🌈', '8': '🌸', '9': '💕', '0': '🫐'}
+
+# Rule: - followed by Even = 🍭, - followed by Odd = 🍬
+
+
+def apply_sweet_parity(text):
+    """Converts negative signs into 🍭 or 🍬 based on the digit parity."""
+    def replacer(match):
+        sign = match.group(1)
+        digit = match.group(2)
+        if int(digit) % 2 == 0:
+            return '🍭' + digit
+        else:
+            return '🍬' + digit
+    return re.sub(r'(-)(\d)', replacer, text)
+
+def reverse_sweet_parity(text):
+    """Converts 🍭 and 🍬 back into negative signs."""
+    text = text.replace('🍭', '-')
+    text = text.replace('🍬', '-')
+    return text
 
 def get_matrix_elements(key):
     seed = sum(ord(c) for c in key)
@@ -140,7 +159,12 @@ if kw and (kiss_btn or tell_btn):
             if points:
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
-                emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
+                
+                # Apply the Sweet Parity Rule to the raw string
+                parity_res = apply_sweet_parity(raw_res)
+                # Then apply standard emoji map
+                emoji_res = "".join(EMOJI_MAP.get(c, c) for c in parity_res)
+                
                 final_share_msg = f"{emoji_res}\\n\\nHint: {hint_text}" if hint_text else emoji_res
                 
                 with output_placeholder.container():
@@ -151,8 +175,14 @@ if kw and (kiss_btn or tell_btn):
 
         if tell_btn:
             try:
+                # 1. Strip hint
                 clean_input = user_input.split("Hint:")[0].strip()
-                clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in clean_input)
+                # 2. Reverse standard emojis
+                reverse_map = {v: k for k, v in EMOJI_MAP.items()}
+                standard_reverted = "".join(reverse_map.get(c, c) for c in clean_input)
+                # 3. Reverse the Sweet Parity (Candy/Lollipop -> Negative Sign)
+                clean_msg = reverse_sweet_parity(standard_reverted)
+                
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
                 inv_c, inv_d = (-c * det_inv) % 31, (a * det_inv) % 31
                 header, moves_part = clean_msg.split("|")
