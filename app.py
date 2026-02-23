@@ -19,36 +19,44 @@ st.markdown("""
         color: #B4A7D6 !important; 
         border: 2px solid #B4A7D6 !important;
         font-family: "Courier New", Courier, monospace !important;
-        font-size: 18px !important;
+        font-size: 22px !important;
         font-weight: bold !important;
     }
 
-    /* MASSIVE BOLD BUTTONS */
+    /* THE "GIGANTIC" BUTTONS */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
-        border-radius: 20px !important;
-        min-height: 100px !important; 
-        font-size: 64px !important; /* Significantly larger font */
+        border-radius: 25px !important;
+        min-height: 140px !important; /* Taller buttons */
+        font-size: 80px !important;   /* Massive font */
         font-weight: 900 !important;
         text-transform: uppercase;
-        line-height: 1.2 !important;
+        line-height: 1 !important;
         border: none !important;
         width: 100% !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.1); /* Subtle depth */
+        letter-spacing: -2px !important; /* Keeps massive text from breaking */
+        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease 0s;
+    }
+    
+    div.stButton > button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 15px 20px rgba(180, 167, 214, 0.4);
     }
 
     /* ENCODED BOX */
     .result-box {
         background-color: #FEE2E9; 
         color: #B4A7D6;
-        padding: 15px;
+        padding: 20px;
         border-radius: 10px;
         font-family: "Courier New", Courier, monospace !important;
-        border: 2px solid #B4A7D6;
+        border: 3px solid #B4A7D6;
         word-wrap: break-word;
-        margin-top: 10px;
+        margin-top: 15px;
         font-weight: bold;
+        font-size: 20px;
     }
 
     /* DECODED WHISPER STYLE */
@@ -56,10 +64,10 @@ st.markdown("""
         color: #B4A7D6;
         font-family: "Courier New", Courier, monospace !important;
         font-weight: bold;
-        font-size: 28px;
-        margin-top: 15px;
-        border-top: 2px dashed #B4A7D6;
-        padding-top: 10px;
+        font-size: 32px;
+        margin-top: 20px;
+        border-top: 3px dashed #B4A7D6;
+        padding-top: 15px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -132,8 +140,8 @@ if kw and (kiss_btn or tell_btn):
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
-                    share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:85px; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase; border:none;">SHARE OPTIONS ✨</button>"""
-                    components.html(share_html, height=100)
+                    share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:900; border-radius:25px; min-height:100px; width:100%; cursor:pointer; font-size: 40px; text-transform: uppercase; border:none; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">SHARE OPTIONS ✨</button>"""
+                    components.html(share_html, height=130)
 
         if tell_btn:
             try:
