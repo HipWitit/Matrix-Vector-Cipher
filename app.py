@@ -4,60 +4,35 @@ import os
 import streamlit.components.v1 as components
 
 # --- 1. CONFIG & STYLING ---
-# This must be the very first Streamlit command
 st.set_page_config(page_title="Cyfer's Secret Love Language", layout="centered")
 
 st.markdown("""
     <style>
     .stApp { background-color: #E6E1F2 !important; }
-    
-    /* HIDE ALL TEXT LABELS */
-    div[data-testid="stWidgetLabel"], label {
-        display: none !important;
-        height: 0px !important;
-        margin: 0px !important;
-        padding: 0px !important;
-    }
+    div[data-testid="stWidgetLabel"], label { display: none !important; }
 
     /* INPUT BOX CUSTOMIZATION */
     .stTextInput > div > div > input, 
     .stTextArea > div > div > textarea,
-    input::placeholder,
-    textarea::placeholder {
+    input::placeholder, textarea::placeholder {
         background-color: #FEE2E9 !important;
         color: #B4A7D6 !important; 
         border: 2px solid #B4A7D6 !important;
         font-family: "Courier New", Courier, monospace !important;
         font-size: 18px !important;
         font-weight: bold !important;
-        -webkit-text-fill-color: #B4A7D6 !important;
     }
 
-    /* SPACING ADJUSTMENTS */
-    .stTextInput { margin-top: 15px !important; margin-bottom: 10px !important; }
-    .stTextArea { margin-top: 5px !important; }
-
-    /* --- FLEXIBLE BIG BUTTONS --- */
-    div.stButton > button p {
-        font-size: 38px !important; 
-        font-weight: bold !important;
-        line-height: 1.1 !important; 
-        margin: 0 !important;
-        padding: 10px 0 !important;
-    }
-
+    /* BIG BUTTON STYLING */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         border-radius: 20px !important;
-        min-height: 75px !important; 
-        height: auto !important;     
-        border: none !important;
+        min-height: 75px !important;
         width: 100% !important;
+        font-size: 38px !important;
+        font-weight: bold !important;
         text-transform: uppercase;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
     }
 
     .result-box {
@@ -66,19 +41,8 @@ st.markdown("""
         padding: 15px;
         border-radius: 10px;
         font-family: "Courier New", Courier, monospace !important;
-        margin-bottom: 10px;
         border: 2px solid #B4A7D6;
         word-wrap: break-word;
-    }
-
-    .whisper-text {
-        color: #B4A7D6;
-        font-family: "Courier New", Courier, monospace !important;
-        font-weight: bold;
-        font-size: 26px;
-        margin-top: 15px;
-        border-top: 2px dashed #B4A7D6;
-        padding-top: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -110,30 +74,26 @@ def clear_everything():
     st.session_state.hint = ""
 
 # --- 3. UI LAYOUT ---
-# Swapping use_container_width for use_column_width to silence warnings
-if os.path.exists("CYPHER.png"): 
-    st.image("CYPHER.png", use_column_width=True)
+# Images now use use_column_width=True to stop logs
+if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_column_width=True)
+if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_column_width=True)
 
-if os.path.exists("Lock Lips.png"): 
-    st.image("Lock Lips.png", use_column_width=True)
+kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY").upper().strip()
+hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)")
 
-kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY", label_visibility="collapsed").upper().strip()
-hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)", label_visibility="collapsed")
-
-if os.path.exists("Kiss Chemistry.png"): 
-    st.image("Kiss Chemistry.png", use_column_width=True)
-
-user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR MESSAGE", label_visibility="collapsed")
+if os.path.exists("Kiss Chemistry.png"): st.image("Kiss Chemistry.png", use_column_width=True)
+user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR MESSAGE")
 
 output_placeholder = st.empty()
 
 col_main1, col_main2 = st.columns(2)
 with col_main1:
-    kiss_btn = st.button("KISS", use_container_width=True)
+    # Removed use_container_width to silence the final warning
+    kiss_btn = st.button("KISS") 
 with col_main2:
-    tell_btn = st.button("TELL", use_container_width=True)
+    tell_btn = st.button("TELL")
 
-st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
+st.button("DESTROY CHEMISTRY", on_click=clear_everything)
 
 # --- 4. PROCESSING LOGIC ---
 if kw and (kiss_btn or tell_btn):
@@ -152,18 +112,12 @@ if kw and (kiss_btn or tell_btn):
                 moves = [f"({points[i+1][0]-points[i][0]},{points[i+1][1]-points[i][1]})" for i in range(len(points)-1)]
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
-                
                 final_share_msg = f"{emoji_res}\\n\\nHint: {hint_text}" if hint_text else emoji_res
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    if hint_text: st.caption(f"Hint: {hint_text}")
-                    
-                    share_html = f"""
-                        <button onclick="if(navigator.share){{navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})}}else{{alert('Manual copy required');}}" 
-                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:75px; height:auto; border:none; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase; padding: 10px;">SHARE OPTIONS ✨</button>
-                    """
-                    components.html(share_html, height=120) 
+                    share_html = f"""<button onclick="navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; min-height:75px; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase;">SHARE OPTIONS ✨</button>"""
+                    components.html(share_html, height=120)
 
         if tell_btn:
             try:
@@ -180,7 +134,7 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                
-                output_placeholder.markdown(f'<div class="whisper-text">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
+                output_placeholder.markdown(f'<div class="result-box">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
+
