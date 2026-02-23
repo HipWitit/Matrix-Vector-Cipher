@@ -2,6 +2,7 @@ import streamlit as st
 import re
 import os
 import urllib.parse
+import streamlit.components.v1 as components
 from st_copy_to_clipboard import st_copy_to_clipboard
 
 # --- 1. CONFIG & STYLING ---
@@ -19,7 +20,7 @@ st.markdown("""
         border: 2px solid #B4A7D6 !important;
     }
 
-    /* Standard Buttons & Link Buttons */
+    /* Standard Buttons */
     div.stButton > button, div.stLinkButton > a {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
@@ -34,7 +35,7 @@ st.markdown("""
         text-decoration: none !important;
     }
 
-    /* Copy Button Styling - Purple theme matching Kiss/Tell */
+    /* Copy Button Styling */
     div[data-testid="stCustomComponentV1"] button {
         background-color: #B4A7D6 !important;
         color: #FFD4E5 !important;
@@ -43,12 +44,6 @@ st.markdown("""
         height: 45px !important; 
         border: none !important;
         width: 100% !important;
-        box-shadow: none !important;
-    }
-
-    div[data-testid="stCustomComponentV1"] iframe {
-        background-color: transparent !important;
-        border: none !important;
     }
 
     .result-box {
@@ -85,26 +80,20 @@ def modInverse(n, m=31):
         if (((n % m) * (x % m)) % m == 1): return x
     return None
 
-def clear_everything():
-    st.session_state.lips = ""
-    st.session_state.chem = ""
-    st.session_state.hint = ""
-
 # --- 3. UI LAYOUT ---
 if os.path.exists("CYPHER.png"): st.image("CYPHER.png", use_container_width=True)
 if os.path.exists("Lock Lips.png"): st.image("Lock Lips.png", use_container_width=True)
 
-kw = st.text_input("Key", type="password", label_visibility="collapsed", key="lips", placeholder="SECRET KEY").upper().strip()
-hint_text = st.text_input("Hint", label_visibility="collapsed", key="hint", placeholder="KEY HINT (Optional)")
+kw = st.text_input("Key", type="password", key="lips", placeholder="SECRET KEY").upper().strip()
+hint_text = st.text_input("Hint", key="hint", placeholder="KEY HINT (Optional)")
 
 if os.path.exists("Kiss Chemistry.png"): st.image("Kiss Chemistry.png", use_container_width=True)
-user_input = st.text_area("Message", height=120, label_visibility="collapsed", key="chem", placeholder="YOUR MESSAGE")
+user_input = st.text_area("Message", height=120, key="chem", placeholder="YOUR MESSAGE")
 
 output_placeholder = st.empty()
 
 kiss_btn = st.button("KISS", use_container_width=True)
 tell_btn = st.button("TELL", use_container_width=True)
-st.button("DESTROY CHEMISTRY", use_container_width=True, on_click=clear_everything)
 
 # --- 4. PROCESSING LOGIC ---
 if kw and (kiss_btn or tell_btn):
@@ -124,29 +113,34 @@ if kw and (kiss_btn or tell_btn):
                 raw_res = f"{points[0][0]},{points[0][1]} | MOVES: {' '.join(moves)}"
                 emoji_res = "".join(EMOJI_MAP.get(c, c) for c in raw_res)
                 
-                # REVISED PACKAGING WITH HINT
-                final_share_msg = f"{emoji_res}\n\nHint: {hint_text}" if hint_text else emoji_res
-                encoded_msg = urllib.parse.quote(final_share_msg)
+                final_share_msg = f"{emoji_res}\\n\\nHint: {hint_text}" if hint_text else emoji_res
+                encoded_msg = urllib.parse.quote(final_share_msg.replace("\\n", "\n"))
                 
                 with output_placeholder.container():
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
-                    if hint_text:
-                        st.caption(f"Hint: {hint_text}")
+                    if hint_text: st.caption(f"Hint: {hint_text}")
                     
-                    # 1. PRIMARY ACTION: COPY
-                    st_copy_to_clipboard(final_share_msg, before_copy_label="COPY CHEMISTRY & HINT", after_copy_label="COPIED! 🩷")
+                    st_copy_to_clipboard(final_share_msg.replace("\\n", "\n"), "COPY CHEMISTRY & HINT", "COPIED! 🩷")
                     
                     col1, col2 = st.columns(2)
                     with col1:
-                        # 2. RELIABLE FALLBACK: SMS
                         st.link_button("SEND TEXT 📱", f"sms:?body={encoded_msg}", use_container_width=True)
                     with col2:
-                        # 3. MANUAL SHARE INSTRUCTIONS (Replaces broken Messenger link)
-                        st.button("SHARE OPTIONS ✨", help="Tap 'Copy' then use your phone's browser menu to paste into Messenger or other apps.", use_container_width=True)
+                        # NATIVE SHARE INJECTION
+                        share_html = f"""
+                            <script>
+                            function shareMe() {{
+                                if (navigator.share) {{
+                                    navigator.share({{ title: 'Secret Language', text: `{final_share_msg}` }});
+                                }} else {{ alert('Share not supported here. Use Copy & Paste!'); }}
+                            }}
+                            </script>
+                            <button onclick="shareMe()" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:15px; height:50px; border:none; width:100%; cursor:pointer;">SHARE OPTIONS ✨</button>
+                        """
+                        components.html(share_html, height=60)
 
         if tell_btn:
             try:
-                # Strip hint text if pasted back in
                 clean_input = user_input.split("Hint:")[0].strip()
                 clean_msg = "".join(REVERSE_EMOJI_MAP.get(c, c) for c in clean_input)
                 inv_a, inv_b = (d * det_inv) % 31, (-b * det_inv) % 31
