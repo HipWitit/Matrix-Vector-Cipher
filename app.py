@@ -36,24 +36,22 @@ st.markdown("""
     .stTextInput { margin-top: 15px !important; margin-bottom: 10px !important; }
     .stTextArea { margin-top: 5px !important; }
 
-    /* --- 2X BIGGER BUTTON FONT --- */
+    /* --- 2X BIGGER BUTTON FONT (FORCED) --- */
+    /* This targets the actual text container inside the button */
+    div.stButton > button p {
+        font-size: 38px !important; 
+        font-weight: bold !important;
+        font-family: sans-serif !important;
+    }
+
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
-        font-weight: bold !important;
         border-radius: 20px !important;
-        
-        /* Fixed height to keep button size the same */
-        height: 70px !important; 
+        height: 75px !important; /* Kept button size the same */
         border: none !important;
         width: 100% !important;
-        
-        /* 2x Font Size */
-        font-size: 36px !important; 
         text-transform: uppercase;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     .result-box {
@@ -150,12 +148,12 @@ if kw and (kiss_btn or tell_btn):
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
                     
-                    # LARGE SHARE BUTTON MATCHING STYLE
+                    # 2X BIGGER SHARE BUTTON TEXT
                     share_html = f"""
                         <button onclick="if(navigator.share){{navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})}}else{{alert('Manual copy required');}}" 
-                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; height:70px; border:none; width:100%; cursor:pointer; font-size: 36px; text-transform: uppercase;">SHARE OPTIONS ✨</button>
+                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:20px; height:75px; border:none; width:100%; cursor:pointer; font-size: 38px; text-transform: uppercase;">SHARE OPTIONS ✨</button>
                     """
-                    components.html(share_html, height=85)
+                    components.html(share_html, height=90)
 
         if tell_btn:
             try:
