@@ -1,7 +1,6 @@
 import streamlit as st
 import re
 import os
-import urllib.parse
 import streamlit.components.v1 as components
 
 # --- 1. CONFIG & STYLING ---
@@ -25,7 +24,7 @@ st.markdown("""
     input::placeholder,
     textarea::placeholder {
         background-color: #FEE2E9 !important;
-        color: #B4A7D6 !important; /* BUTTON PURPLE FONT */
+        color: #B4A7D6 !important; 
         border: 2px solid #B4A7D6 !important;
         font-family: "Courier New", Courier, monospace !important;
         font-size: 18px !important;
@@ -33,27 +32,22 @@ st.markdown("""
         -webkit-text-fill-color: #B4A7D6 !important;
     }
 
-    /* FIX FOR TOP BOX CUT-OFF */
-    /* Adds a little space above the first input so it doesn't hit the image */
-    .stTextInput {
-        margin-top: 10px !important; 
-        margin-bottom: 10px !important;
-    }
+    /* SPACING ADJUSTMENTS */
+    .stTextInput { margin-top: 15px !important; margin-bottom: 10px !important; }
+    .stTextArea { margin-top: 5px !important; }
 
-    /* Keeps the Message box tight to its image */
-    .stTextArea {
-        margin-top: 5px !important;
-    }
-
-    /* Standard Buttons */
+    /* --- BUTTON FONT SIZE CUSTOMIZATION --- */
     div.stButton > button {
         background-color: #B4A7D6 !important; 
         color: #FFD4E5 !important;
         font-weight: bold !important;
         border-radius: 15px !important;
-        height: 50px !important;
+        height: 60px !important; /* Increased height slightly for larger font */
         border: none !important;
         width: 100% !important;
+        
+        /* ADJUST THIS NUMBER TO CHANGE BUTTON FONT SIZE */
+        font-size: 24px !important; 
     }
 
     .result-box {
@@ -65,6 +59,14 @@ st.markdown("""
         margin-bottom: 10px;
         border: 2px solid #B4A7D6;
         word-wrap: break-word;
+    }
+
+    /* Custom style for the Decoded header */
+    .whisper-text {
+        color: #B4A7D6;
+        font-weight: bold;
+        font-size: 22px;
+        margin-top: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -139,17 +141,12 @@ if kw and (kiss_btn or tell_btn):
                     st.markdown(f'<div class="result-box">{emoji_res}</div>', unsafe_allow_html=True)
                     if hint_text: st.caption(f"Hint: {hint_text}")
                     
+                    # SHARE BUTTON WITH ADJUSTABLE FONT SIZE
                     share_html = f"""
-                        <script>
-                        function shareMe() {{
-                            if (navigator.share) {{
-                                navigator.share({{ title: 'Secret Language', text: `{final_share_msg}` }});
-                            }} else {{ alert('Share not supported here. Copy manual!'); }}
-                        }}
-                        </script>
-                        <button onclick="shareMe()" style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:15px; height:50px; border:none; width:100%; cursor:pointer;">SHARE OPTIONS ✨</button>
+                        <button onclick="if(navigator.share){{navigator.share({{title:'Secret Language',text:`{final_share_msg}`}})}}else{{alert('Manual copy required');}}" 
+                        style="background-color:#B4A7D6; color:#FFD4E5; font-weight:bold; border-radius:15px; height:60px; border:none; width:100%; cursor:pointer; font-size: 24px;">SHARE OPTIONS ✨</button>
                     """
-                    components.html(share_html, height=60)
+                    components.html(share_html, height=70)
 
         if tell_btn:
             try:
@@ -166,6 +163,8 @@ if kw and (kiss_btn or tell_btn):
                     curr_x, curr_y = curr_x + int(dx), curr_y + int(dy)
                     ux, uy = (inv_a * curr_x + inv_b * curr_y) % 31, (inv_c * curr_x + inv_d * curr_y) % 31
                     decoded.append(coord_to_char.get((ux, uy), "?"))
-                output_placeholder.markdown(f"### <span style='color:#B4A7D6'>Cypher Whispers: {''.join(decoded)}</span>", unsafe_allow_html=True)
+                
+                # UPDATED BRANDING: Cipher Whispers
+                output_placeholder.markdown(f'<div class="whisper-text">Cypher Whispers: {"".join(decoded)}</div>', unsafe_allow_html=True)
             except:
                 st.error("Chemistry Error!")
